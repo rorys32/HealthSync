@@ -1,4 +1,4 @@
-<!-- HealthSync Version 1.1.002 -->
+<!-- HealthSync Version 1.1.003 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -24,6 +24,14 @@
             <div>
                 <h3>Medications</h3>
                 <div id="medications"></div>
+            </div>
+            <div>
+                <h3>Mood</h3>
+                <div id="mood"></div>
+            </div>
+            <div>
+                <h3>Symptoms</h3>
+                <div id="symptoms"></div>
             </div>
         </section>
         <section>
@@ -70,6 +78,26 @@
                 <button onclick="addSupplement()">Add Supplement</button>
             </div>
             <div>
+                <h3>Mood</h3>
+                <select id="moodType">
+                    <option value="Happy">Happy</option>
+                    <option value="Sad">Sad</option>
+                    <option value="Anxious">Anxious</option>
+                    <option value="Calm">Calm</option>
+                    <option value="Angry">Angry</option>
+                </select>
+                <input type="number" id="moodIntensity" placeholder="Intensity (1-10)">
+                <input type="text" id="moodNotes" placeholder="Notes">
+                <button onclick="addMood()">Add Mood</button>
+            </div>
+            <div>
+                <h3>Symptom</h3>
+                <input type="text" id="symptomName" placeholder="Symptom (e.g., Headache)">
+                <input type="number" id="symptomSeverity" placeholder="Severity (1-10)">
+                <input type="text" id="symptomNotes" placeholder="Notes">
+                <button onclick="addSymptom()">Add Symptom</button>
+            </div>
+            <div>
                 <h3>Vitals</h3>
                 <input type="number" id="weightInput" placeholder="Weight (lbs)">
                 <input type="number" id="bpSystolic" placeholder="BP Systolic">
@@ -80,16 +108,26 @@
             </div>
         </section>
         <section>
+            <h2>Shopping List</h2>
+            <div id="shoppingList"></div>
+            <input type="text" id="shopItemName" placeholder="Item Name">
+            <input type="text" id="shopQuantity" placeholder="Quantity">
+            <input type="text" id="shopPurpose" placeholder="Purpose">
+            <button onclick="addShoppingItem()">Add Item</button>
+        </section>
+        <section>
             <h2>Trends</h2>
             <select id="trendToggle" onchange="renderTrends()">
                 <option value="activity">Activity</option>
                 <option value="vitals">Vitals</option>
                 <option value="diet">Diet</option>
+                <option value="mood">Mood</option>
+                <option value="symptoms">Symptoms</option>
             </select>
             <canvas id="trendChart" width="400" height="200"></canvas>
         </section>
         <button onclick="saveData()">Save Data as JSON</button>
-        <footer>HealthSync v1.1.002</footer>
+        <footer>HealthSync v1.1.003</footer>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="script.js"></script>
