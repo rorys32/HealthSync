@@ -1,3 +1,4 @@
+/* HealthSync Version 1.1.002 */
 body {
     font-family: 'Poppins', sans-serif;
     background-color: #e6f7e6; /* Light green */
@@ -48,7 +49,7 @@ input[type="checkbox"] {
     accent-color: #4caf50;
 }
 
-input[type="text"], input[type="number"], input[type="time"], select {
+input[type="text"], input[type="number"], input[type="time"], input[type="file"], select {
     padding: 6px;
     margin: 5px;
     width: 130px;
@@ -74,6 +75,11 @@ button:hover {
 p {
     font-size: 16px;
     color: #424242;
+}
+
+#caffeineWarning {
+    color: #d32f2f; /* Red for warning */
+    font-weight: 600;
 }
 
 footer {
