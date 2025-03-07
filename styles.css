@@ -1,4 +1,4 @@
-/* HealthSync Version 1.1.002 */
+/* HealthSync Version 1.1.003 */
 body {
     font-family: 'Poppins', sans-serif;
     background-color: #e6f7e6; /* Light green */
@@ -87,4 +87,8 @@ footer {
     margin-top: 20px;
     font-size: 14px;
     color: #666;
+}
+
+.shop-item {
+    margin: 5px 0;
 }
