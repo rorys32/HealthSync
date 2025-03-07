@@ -1,4 +1,4 @@
-<!-- HealthSync Version 1.1.001 -->
+<!-- HealthSync Version 1.1.002 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,8 +13,18 @@
         <h1>HealthSync</h1>
         <section id="daily">
             <h2>Daily Log - <span id="currentDate"></span></h2>
-            <div id="morning"></div>
-            <div id="midMorning"></div>
+            <div>
+                <h3>Food and Beverage</h3>
+                <div id="foodBeverage"></div>
+            </div>
+            <div>
+                <h3>Supplements</h3>
+                <div id="supplements"></div>
+            </div>
+            <div>
+                <h3>Medications</h3>
+                <div id="medications"></div>
+            </div>
         </section>
         <section>
             <h2>Totals</h2>
@@ -23,6 +33,7 @@
             <p>Carbs: <span id="carbs">0</span>g</p>
             <p>Fats: <span id="fats">0</span>g</p>
             <p>Sugar: <span id="sugar">0</span>g</p>
+            <p>Caffeine: <span id="caffeine">0</span> mg <span id="caffeineWarning"></span></p>
             <p>Water: <span id="water">0</span> / <span id="waterGoal"></span> oz</p>
             <p>Steps: <span id="steps">0</span></p>
         </section>
@@ -37,6 +48,7 @@
                 <input type="number" id="carbsInput" placeholder="Carbs (g)">
                 <input type="number" id="fatsInput" placeholder="Fats (g)">
                 <input type="number" id="sugarInput" placeholder="Sugar (g)">
+                <input type="number" id="caffeineInput" placeholder="Caffeine (mg)">
                 <button onclick="addFood()">Add Food</button>
                 <input type="file" id="nutritionPhoto" accept="image/*" onchange="parseNutritionPhoto()">
             </div>
@@ -53,6 +65,7 @@
                 <input type="text" id="supplementName" placeholder="Supplement Name" list="supplementList">
                 <datalist id="supplementList"></datalist>
                 <input type="text" id="suppQuantity" placeholder="Quantity">
+                <input type="number" id="suppCaffeine" placeholder="Caffeine (mg)">
                 <input type="time" id="suppTime">
                 <button onclick="addSupplement()">Add Supplement</button>
             </div>
@@ -76,7 +89,7 @@
             <canvas id="trendChart" width="400" height="200"></canvas>
         </section>
         <button onclick="saveData()">Save Data as JSON</button>
-        <footer>HealthSync v1.1.001</footer>
+        <footer>HealthSync v1.1.002</footer>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="script.js"></script>
