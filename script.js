@@ -1,3 +1,4 @@
+// HealthSync Version 1.1.002
 let profile;
 let chart;
 
@@ -22,23 +23,25 @@ function loadChecklist() {
     if (!profile.days[today]) profile.days[today] = { nutrition: [], water: { consumed: 0 }, supplementsTaken: [], activity: [], vitals: {} };
 
     const daily = profile.days[today];
-    const morning = document.getElementById("morning");
-    morning.innerHTML = profile.today.nutrition.map((item, index) => 
-        `<label><input type="checkbox" id="food${index}" onchange="updateTotals()" checked> ${item.food}: ${item.quantity} (${item.nutrition.calories} cal)</label>`
+    const foodBeverage = document.getElementById("foodBeverage");
+    foodBeverage.innerHTML = profile.today.nutrition.map((item, index) => 
+        `<label><input type="checkbox" id="food${index}" onchange="updateTotals()" checked> ${item.food}: ${item.quantity} (${item.nutrition.calories} cal${item.nutrition.caffeine_mg ? ", " + item.nutrition.caffeine_mg + " mg caffeine" : ""})</label>`
     ).join("") +
-    profile.today.supplementsTaken.map((supp, index) => 
-        `<label><input type="checkbox" id="supp${index}" checked> ${supp.name} (${supp.quantity})</label>`
+    `<label><input type="checkbox" id="water1" onchange="updateTotals()" ${profile.today.water.consumed >= 16 ? "checked" : ""}> 16 oz Water</label>` +
+    `<label><input type="checkbox" id="water2" onchange="updateTotals()" ${profile.today.water.consumed >= 32 ? "checked" : ""}> 16 oz Water</label>`;
+
+    const supplements = document.getElementById("supplements");
+    supplements.innerHTML = profile.today.supplementsTaken.map((supp, index) => 
+        `<label><input type="checkbox" id="supp${index}" checked> ${supp.name} (${supp.quantity}${supp.caffeine_mg ? ", " + supp.caffeine_mg + " mg caffeine" : ""})</label>`
     ).join("");
 
-    const midMorning = document.getElementById("midMorning");
-    midMorning.innerHTML = `<label><input type="checkbox" id="water1" onchange="updateTotals()" ${profile.today.water.consumed >= 16 ? "checked" : ""}> 16 oz Water</label>` +
-        `<label><input type="checkbox" id="water2" onchange="updateTotals()" ${profile.today.water.consumed >= 32 ? "checked" : ""}> 16 oz Water</label>` +
-        profile.today.activity.map((act, index) => 
-            `<label><input type="checkbox" id="act${index}" checked> ${act.type} (${act.steps ? act.steps + " steps" : act.duration + " min"}) - ${act.estimated_calories_burned} cal</label>`
-        ).join("") +
-        profile.today.medicationsTaken.map((med, index) => 
-            `<label><input type="checkbox" id="med${index}" checked> ${med.name} (${med.quantity})</label>`
-        ).join("");
+    const medications = document.getElementById("medications");
+    medications.innerHTML = profile.today.medicationsTaken.map((med, index) => 
+        `<label><input type="checkbox" id="med${index}" checked> ${med.name} (${med.quantity})</label>`
+    ).join("") +
+    profile.today.activity.map((act, index) => 
+        `<label><input type="checkbox" id="act${index}" checked> ${act.type} (${act.steps ? act.steps + " steps" : act.duration + " min"}) - ${act.estimated_calories_burned} cal</label>`
+    ).join("");
 
     document.getElementById("currentDate").innerText = today;
     document.getElementById("calGoal").innerText = profile.calorieGoal || 1700;
@@ -51,7 +54,7 @@ function updateTotals() {
     const daily = profile.days[today];
     daily.water.consumed = (document.getElementById("water1").checked ? 16 : 0) + (document.getElementById("water2").checked ? 16 : 0);
 
-    let calories = 0, protein = 0, carbs = 0, fats = 0, sugar = 0, steps = 0;
+    let calories = 0, protein = 0, carbs = 0, fats = 0, sugar = 0, caffeine = 0, steps = 0;
     profile.today.nutrition.forEach((item, index) => {
         if (document.getElementById(`food${index}`).checked) {
             calories += item.nutrition.calories;
@@ -59,6 +62,12 @@ function updateTotals() {
             carbs += item.nutrition.carbs || 0;
             fats += item.nutrition.fat || 0;
             sugar += item.nutrition.sugar || 0;
+            caffeine += item.nutrition.caffeine_mg || 0;
+        }
+    });
+    profile.today.supplementsTaken.forEach((supp, index) => {
+        if (document.getElementById(`supp${index}`).checked) {
+            caffeine += supp.caffeine_mg || 0;
         }
     });
     const burned = profile.today.activity.reduce((sum, act) => sum + parseInt(act.estimated_calories_burned || "0"), 0);
@@ -69,6 +78,8 @@ function updateTotals() {
     document.getElementById("carbs").innerText = carbs;
     document.getElementById("fats").innerText = fats;
     document.getElementById("sugar").innerText = sugar;
+    document.getElementById("caffeine").innerText = caffeine;
+    document.getElementById("caffeineWarning").innerText = caffeine > 400 ? " (High!)" : "";
     document.getElementById("water").innerText = daily.water.consumed;
     document.getElementById("burned").innerText = burned;
     document.getElementById("net").innerText = calories - burned;
@@ -84,12 +95,13 @@ function addFood() {
     const carbs = parseFloat(document.getElementById("carbsInput").value) || 0;
     const fats = parseFloat(document.getElementById("fatsInput").value) || 0;
     const sugar = parseFloat(document.getElementById("sugarInput").value) || 0;
+    const caffeine = parseFloat(document.getElementById("caffeineInput").value) || 0;
 
     if (name && quantity && calories) {
         const newFood = { 
             food: name, 
             quantity: quantity, 
-            nutrition: { calories: calories, protein: protein, carbs: carbs, fat: fats, sugar: sugar } 
+            nutrition: { calories: calories, protein: protein, carbs: carbs, fat: fats, sugar: sugar, caffeine_mg: caffeine } 
         };
         profile.today.nutrition.push(newFood);
         profile.days[today].nutrition.push(newFood);
@@ -98,7 +110,7 @@ function addFood() {
             profile.masterList.foods.push({ 
                 name: name, 
                 serving_size: quantity, 
-                nutrition: { calories: calories, protein: protein, carbs: carbs, fat: fats, sugar: sugar } 
+                nutrition: { calories: calories, protein: protein, carbs: carbs, fat: fats, sugar: sugar, caffeine_mg: caffeine } 
             });
         }
 
@@ -132,15 +144,22 @@ function addSupplement() {
     const today = new Date().toISOString().split('T')[0];
     const name = document.getElementById("supplementName").value;
     const quantity = document.getElementById("suppQuantity").value;
+    const caffeine = parseFloat(document.getElementById("suppCaffeine").value) || 0;
     const time = document.getElementById("suppTime").value;
 
     if (name && quantity && time) {
-        const newSupp = { name: name, quantity: quantity, time: time };
+        const newSupp = { name: name, quantity: quantity, caffeine_mg: caffeine, time: time };
         profile.today.supplementsTaken.push(newSupp);
         profile.days[today].supplementsTaken.push(newSupp);
 
+        if (!profile.masterList.supplements.some(s => s.name === name)) {
+            profile.masterList.supplements.push({ name: name, serving_size: quantity, caffeine_mg: caffeine, purpose: "User-added" });
+            populateSupplements();
+        }
+
         clearInputs("supplement");
         loadChecklist();
+        updateTotals();
     }
 }
 
@@ -175,20 +194,28 @@ function clearFoods() {
     document.getElementById("carbsInput").value = "";
     document.getElementById("fatsInput").value = "";
     document.getElementById("sugarInput").value = "";
+    document.getElementById("caffeineInput").value = "";
 }
 
 function clearInputs(section) {
     const inputs = {
         activity: ["activityType", "stepsInput", "durationInput", "caloriesBurnedInput"],
-        supplement: ["suppQuantity", "suppTime"],
+        supplement: ["supplementName", "suppQuantity", "suppCaffeine", "suppTime"],
         vitals: ["weightInput", "bpSystolic", "bpDiastolic", "energyInput", "heartRateInput"]
     };
     inputs[section].forEach(id => document.getElementById(id).value = "");
 }
 
 function populateSupplements() {
-    const select = document.getElementById("supplementName");
-    select.innerHTML = profile.masterList.supplements.map(supp => `<option value="${supp.name}">${supp.name}</option>`).join("");
+    const datalist = document.getElementById("supplementList");
+    datalist.innerHTML = profile.masterList.supplements.map(supp => `<option value="${supp.name}">`).join("");
+}
+
+function parseNutritionPhoto() {
+    const file = document.getElementById("nutritionPhoto").files[0];
+    if (file) {
+        alert("Photo uploaded! OCR simulation: Enter values manually for now.");
+    }
 }
 
 function renderTrends() {
@@ -238,6 +265,10 @@ function renderTrends() {
         const carbs = days.map(day => profile.days[day].nutrition.reduce((sum, item) => sum + (item.nutrition.carbs || 0), 0));
         const fats = days.map(day => profile.days[day].nutrition.reduce((sum, item) => sum + (item.nutrition.fat || 0), 0));
         const sugar = days.map(day => profile.days[day].nutrition.reduce((sum, item) => sum + (item.nutrition.sugar || 0), 0));
+        const caffeine = days.map(day => 
+            profile.days[day].nutrition.reduce((sum, item) => sum + (item.nutrition.caffeine_mg || 0), 0) +
+            profile.days[day].supplementsTaken.reduce((sum, supp) => sum + (supp.caffeine_mg || 0), 0)
+        );
         chart = new Chart(ctx, {
             type: "line",
             data: {
@@ -247,7 +278,8 @@ function renderTrends() {
                     { label: "Protein (g)", data: protein, borderColor: "#ffca28", fill: false },
                     { label: "Carbs (g)", data: carbs, borderColor: "#1976d2", fill: false },
                     { label: "Fats (g)", data: fats, borderColor: "#ab47bc", fill: false },
-                    { label: "Sugar (g)", data: sugar, borderColor: "#ff5722", fill: false }
+                    { label: "Sugar (g)", data: sugar, borderColor: "#ff5722", fill: false },
+                    { label: "Caffeine (mg)", data: caffeine, borderColor: "#795548", fill: false }
                 ]
             },
             options: { scales: { y: { beginAtZero: true } } }
