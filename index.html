@@ -1,0 +1,84 @@
+<!-- HealthSync Version 1.1.001 -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HealthSync - March 7, 2025</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1>HealthSync</h1>
+        <section id="daily">
+            <h2>Daily Log - <span id="currentDate"></span></h2>
+            <div id="morning"></div>
+            <div id="midMorning"></div>
+        </section>
+        <section>
+            <h2>Totals</h2>
+            <p>Calories: <span id="calories">0</span> - <span id="burned">0</span> = <span id="net">0</span> / <span id="calGoal"></span></p>
+            <p>Protein: <span id="protein">0</span> / <span id="proteinGoal"></span>g</p>
+            <p>Carbs: <span id="carbs">0</span>g</p>
+            <p>Fats: <span id="fats">0</span>g</p>
+            <p>Sugar: <span id="sugar">0</span>g</p>
+            <p>Water: <span id="water">0</span> / <span id="waterGoal"></span> oz</p>
+            <p>Steps: <span id="steps">0</span></p>
+        </section>
+        <section>
+            <h2>Log New Data</h2>
+            <div>
+                <h3>Food</h3>
+                <input type="text" id="foodName" placeholder="Food Name">
+                <input type="text" id="quantity" placeholder="Quantity">
+                <input type="number" id="caloriesInput" placeholder="Calories">
+                <input type="number" id="proteinInput" placeholder="Protein (g)">
+                <input type="number" id="carbsInput" placeholder="Carbs (g)">
+                <input type="number" id="fatsInput" placeholder="Fats (g)">
+                <input type="number" id="sugarInput" placeholder="Sugar (g)">
+                <button onclick="addFood()">Add Food</button>
+                <input type="file" id="nutritionPhoto" accept="image/*" onchange="parseNutritionPhoto()">
+            </div>
+            <div>
+                <h3>Activity</h3>
+                <input type="text" id="activityType" placeholder="Type (e.g., Walking)">
+                <input type="number" id="stepsInput" placeholder="Steps">
+                <input type="number" id="durationInput" placeholder="Duration (min)">
+                <input type="number" id="caloriesBurnedInput" placeholder="Calories Burned">
+                <button onclick="addActivity()">Add Activity</button>
+            </div>
+            <div>
+                <h3>Supplement</h3>
+                <input type="text" id="supplementName" placeholder="Supplement Name" list="supplementList">
+                <datalist id="supplementList"></datalist>
+                <input type="text" id="suppQuantity" placeholder="Quantity">
+                <input type="time" id="suppTime">
+                <button onclick="addSupplement()">Add Supplement</button>
+            </div>
+            <div>
+                <h3>Vitals</h3>
+                <input type="number" id="weightInput" placeholder="Weight (lbs)">
+                <input type="number" id="bpSystolic" placeholder="BP Systolic">
+                <input type="number" id="bpDiastolic" placeholder="BP Diastolic">
+                <input type="number" id="energyInput" placeholder="Energy (1-10)">
+                <input type="number" id="heartRateInput" placeholder="Heart Rate (bpm)">
+                <button onclick="updateVitals()">Update Vitals</button>
+            </div>
+        </section>
+        <section>
+            <h2>Trends</h2>
+            <select id="trendToggle" onchange="renderTrends()">
+                <option value="activity">Activity</option>
+                <option value="vitals">Vitals</option>
+                <option value="diet">Diet</option>
+            </select>
+            <canvas id="trendChart" width="400" height="200"></canvas>
+        </section>
+        <button onclick="saveData()">Save Data as JSON</button>
+        <footer>HealthSync v1.1.001</footer>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
