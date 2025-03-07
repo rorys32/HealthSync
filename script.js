@@ -1,4 +1,4 @@
-// HealthSync Version 1.1.002
+// HealthSync Version 1.1.003
 let profile;
 let chart;
 
@@ -9,18 +9,19 @@ fetch('data.json')
         loadChecklist();
         updateTotals();
         populateSupplements();
+        loadShoppingList();
         renderTrends();
     })
     .catch(() => {
         console.error("Failed to load data.json - ensure a local server is running");
-        profile = { today: { nutrition: [], water: { consumed: 0, goal: 85 }, supplementsTaken: [], activity: [], vitals: {} }, days: {}, masterList: { foods: [], supplements: [] } };
+        profile = { today: { nutrition: [], water: { consumed: 0, goal: 85 }, supplementsTaken: [], activity: [], vitals: {}, mood: [], symptoms: [] }, days: {}, masterList: { foods: [], supplements: [] }, shoppingList: { stores: [{ name: "Walmart", items: [] }] } };
         loadChecklist();
     });
 
 function loadChecklist() {
     const today = new Date().toISOString().split('T')[0];
     if (!profile.days) profile.days = {};
-    if (!profile.days[today]) profile.days[today] = { nutrition: [], water: { consumed: 0 }, supplementsTaken: [], activity: [], vitals: {} };
+    if (!profile.days[today]) profile.days[today] = { nutrition: [], water: { consumed: 0 }, supplementsTaken: [], activity: [], vitals: {}, mood: [], symptoms: [] };
 
     const daily = profile.days[today];
     const foodBeverage = document.getElementById("foodBeverage");
@@ -41,6 +42,16 @@ function loadChecklist() {
     ).join("") +
     profile.today.activity.map((act, index) => 
         `<label><input type="checkbox" id="act${index}" checked> ${act.type} (${act.steps ? act.steps + " steps" : act.duration + " min"}) - ${act.estimated_calories_burned} cal</label>`
+    ).join("");
+
+    const mood = document.getElementById("mood");
+    mood.innerHTML = profile.today.mood.map((m, index) => 
+        `<label><input type="checkbox" id="mood${index}" checked> ${m.type} (Intensity: ${m.intensity}${m.notes ? ", " + m.notes : ""})</label>`
+    ).join("");
+
+    const symptoms = document.getElementById("symptoms");
+    symptoms.innerHTML = profile.today.symptoms.map((s, index) => 
+        `<label><input type="checkbox" id="symptom${index}" checked> ${s.name} (Severity: ${s.severity}${s.notes ? ", " + s.notes : ""})</label>`
     ).join("");
 
     document.getElementById("currentDate").innerText = today;
@@ -163,6 +174,40 @@ function addSupplement() {
     }
 }
 
+function addMood() {
+    const today = new Date().toISOString().split('T')[0];
+    const type = document.getElementById("moodType").value;
+    const intensity = parseInt(document.getElementById("moodIntensity").value) || 0;
+    const notes = document.getElementById("moodNotes").value;
+
+    if (type && intensity) {
+        const newMood = { type: type, intensity: intensity, notes: notes || "", time: new Date().toLocaleTimeString() };
+        profile.today.mood.push(newMood);
+        profile.days[today].mood.push(newMood);
+
+        clearInputs("mood");
+        loadChecklist();
+        renderTrends();
+    }
+}
+
+function addSymptom() {
+    const today = new Date().toISOString().split('T')[0];
+    const name = document.getElementById("symptomName").value;
+    const severity = parseInt(document.getElementById("symptomSeverity").value) || 0;
+    const notes = document.getElementById("symptomNotes").value;
+
+    if (name && severity) {
+        const newSymptom = { name: name, severity: severity, notes: notes || "", time: new Date().toLocaleTimeString() };
+        profile.today.symptoms.push(newSymptom);
+        profile.days[today].symptoms.push(newSymptom);
+
+        clearInputs("symptom");
+        loadChecklist();
+        renderTrends();
+    }
+}
+
 function updateVitals() {
     const today = new Date().toISOString().split('T')[0];
     const weight = parseFloat(document.getElementById("weightInput").value) || null;
@@ -201,6 +246,8 @@ function clearInputs(section) {
     const inputs = {
         activity: ["activityType", "stepsInput", "durationInput", "caloriesBurnedInput"],
         supplement: ["supplementName", "suppQuantity", "suppCaffeine", "suppTime"],
+        mood: ["moodIntensity", "moodNotes"],
+        symptom: ["symptomName", "symptomSeverity", "symptomNotes"],
         vitals: ["weightInput", "bpSystolic", "bpDiastolic", "energyInput", "heartRateInput"]
     };
     inputs[section].forEach(id => document.getElementById(id).value = "");
@@ -209,6 +256,43 @@ function clearInputs(section) {
 function populateSupplements() {
     const datalist = document.getElementById("supplementList");
     datalist.innerHTML = profile.masterList.supplements.map(supp => `<option value="${supp.name}">`).join("");
+}
+
+function loadShoppingList() {
+    const shoppingList = document.getElementById("shoppingList");
+    shoppingList.innerHTML = profile.shoppingList.stores[0].items.map((item, index) => 
+        `<div class="shop-item">
+            <input type="text" id="shopName${index}" value="${item.name}">
+            <input type="text" id="shopQty${index}" value="${item.quantity}">
+            <input type="text" id="shopPurpose${index}" value="${item.purpose}">
+            <button onclick="updateShoppingItem(${index})">Update</button>
+        </div>`
+    ).join("");
+}
+
+function addShoppingItem() {
+    const name = document.getElementById("shopItemName").value;
+    const quantity = document.getElementById("shopQuantity").value;
+    const purpose = document.getElementById("shopPurpose").value;
+
+    if (name && quantity && purpose) {
+        profile.shoppingList.stores[0].items.push({ name: name, quantity: quantity, purpose: purpose });
+        document.getElementById("shopItemName").value = "";
+        document.getElementById("shopQuantity").value = "";
+        document.getElementById("shopPurpose").value = "";
+        loadShoppingList();
+    }
+}
+
+function updateShoppingItem(index) {
+    const name = document.getElementById(`shopName${index}`).value;
+    const quantity = document.getElementById(`shopQty${index}`).value;
+    const purpose = document.getElementById(`shopPurpose${index}`).value;
+
+    if (name && quantity && purpose) {
+        profile.shoppingList.stores[0].items[index] = { name: name, quantity: quantity, purpose: purpose };
+        loadShoppingList();
+    }
 }
 
 function parseNutritionPhoto() {
@@ -283,6 +367,30 @@ function renderTrends() {
                 ]
             },
             options: { scales: { y: { beginAtZero: true } } }
+        });
+    } else if (toggle === "mood") {
+        const intensities = days.map(day => profile.days[day].mood.reduce((sum, m) => sum + m.intensity, 0) / (profile.days[day].mood.length || 1));
+        chart = new Chart(ctx, {
+            type: "line",
+            data: {
+                labels: days,
+                datasets: [
+                    { label: "Mood Intensity (1-10)", data: intensities, borderColor: "#4caf50", fill: false }
+                ]
+            },
+            options: { scales: { y: { min: 0, max: 10 } } }
+        });
+    } else if (toggle === "symptoms") {
+        const severities = days.map(day => profile.days[day].symptoms.reduce((sum, s) => sum + s.severity, 0) / (profile.days[day].symptoms.length || 1));
+        chart = new Chart(ctx, {
+            type: "line",
+            data: {
+                labels: days,
+                datasets: [
+                    { label: "Symptom Severity (1-10)", data: severities, borderColor: "#d32f2f", fill: false }
+                ]
+            },
+            options: { scales: { y: { min: 0, max: 10 } } }
         });
     }
 }
