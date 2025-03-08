@@ -1,4 +1,4 @@
-// HealthSync Version 1.1.003
+// HealthSync Version 1.1.004
 let profile;
 let chart;
 
@@ -13,44 +13,70 @@ fetch('data.json')
         renderTrends();
     })
     .catch(() => {
-        console.error("Failed to load data.json - ensure a local server is running");
-        profile = { today: { nutrition: [], water: { consumed: 0, goal: 85 }, supplementsTaken: [], activity: [], vitals: {}, mood: [], symptoms: [] }, days: {}, masterList: { foods: [], supplements: [] }, shoppingList: { stores: [{ name: "Walmart", items: [] }] } };
+        console.warn("Failed to load data.json - using fallback profile");
+        profile = {
+            config: { moods: ["Happy", "Sad", "Anxious", "Calm", "Angry", "Confused", "Overwhelmed", "Genius"] },
+            today: {
+                nutrition: [],
+                water: { consumed: 0, goal: 85 },
+                supplementsTaken: [],
+                medicationsTaken: [], // Initialized to prevent undefined errors
+                activity: [],
+                vitals: {},
+                mood: [], // Initialized to prevent undefined errors
+                symptoms: [] // Initialized to prevent undefined errors
+            },
+            days: {},
+            masterList: { foods: [], supplements: [] },
+            shoppingList: { stores: [{ name: "Walmart", items: [] }] }
+        };
         loadChecklist();
     });
 
 function loadChecklist() {
     const today = new Date().toISOString().split('T')[0];
     if (!profile.days) profile.days = {};
-    if (!profile.days[today]) profile.days[today] = { nutrition: [], water: { consumed: 0 }, supplementsTaken: [], activity: [], vitals: {}, mood: [], symptoms: [] };
+    if (!profile.days[today]) {
+        profile.days[today] = {
+            nutrition: [],
+            water: { consumed: 0 },
+            supplementsTaken: [],
+            medicationsTaken: [], // Initialized
+            activity: [],
+            vitals: {},
+            mood: [], // Initialized
+            symptoms: [] // Initialized
+        };
+    }
 
     const daily = profile.days[today];
     const foodBeverage = document.getElementById("foodBeverage");
-    foodBeverage.innerHTML = profile.today.nutrition.map((item, index) => 
+    foodBeverage.innerHTML = (profile.today.nutrition || []).map((item, index) => 
         `<label><input type="checkbox" id="food${index}" onchange="updateTotals()" checked> ${item.food}: ${item.quantity} (${item.nutrition.calories} cal${item.nutrition.caffeine_mg ? ", " + item.nutrition.caffeine_mg + " mg caffeine" : ""})</label>`
     ).join("") +
     `<label><input type="checkbox" id="water1" onchange="updateTotals()" ${profile.today.water.consumed >= 16 ? "checked" : ""}> 16 oz Water</label>` +
     `<label><input type="checkbox" id="water2" onchange="updateTotals()" ${profile.today.water.consumed >= 32 ? "checked" : ""}> 16 oz Water</label>`;
 
     const supplements = document.getElementById("supplements");
-    supplements.innerHTML = profile.today.supplementsTaken.map((supp, index) => 
+    supplements.innerHTML = (profile.today.supplementsTaken || []).map((supp, index) => 
         `<label><input type="checkbox" id="supp${index}" checked> ${supp.name} (${supp.quantity}${supp.caffeine_mg ? ", " + supp.caffeine_mg + " mg caffeine" : ""})</label>`
     ).join("");
 
     const medications = document.getElementById("medications");
-    medications.innerHTML = profile.today.medicationsTaken.map((med, index) => 
+    medications.innerHTML = (profile.today.medicationsTaken || []).map((med, index) => 
         `<label><input type="checkbox" id="med${index}" checked> ${med.name} (${med.quantity})</label>`
     ).join("") +
-    profile.today.activity.map((act, index) => 
+    (profile.today.activity || []).map((act, index) => 
         `<label><input type="checkbox" id="act${index}" checked> ${act.type} (${act.steps ? act.steps + " steps" : act.duration + " min"}) - ${act.estimated_calories_burned} cal</label>`
     ).join("");
 
     const mood = document.getElementById("mood");
-    mood.innerHTML = profile.today.mood.map((m, index) => 
+    mood.innerHTML = (profile.today.mood || []).map((m, index) => 
         `<label><input type="checkbox" id="mood${index}" checked> ${m.type} (Intensity: ${m.intensity}${m.notes ? ", " + m.notes : ""})</label>`
     ).join("");
 
     const symptoms = document.getElementById("symptoms");
-    symptoms.innerHTML = profile.today.symptoms.map((s, index) => 
+    symptoms.innerHTML = (profile.today.symptoms || []).map((s, index) => 
         `<label><input type="checkbox" id="symptom${index}" checked> ${s.name} (Severity: ${s.severity}${s.notes ? ", " + s.notes : ""})</label>`
     ).join("");
 
@@ -66,7 +92,7 @@ function updateTotals() {
     daily.water.consumed = (document.getElementById("water1").checked ? 16 : 0) + (document.getElementById("water2").checked ? 16 : 0);
 
     let calories = 0, protein = 0, carbs = 0, fats = 0, sugar = 0, caffeine = 0, steps = 0;
-    profile.today.nutrition.forEach((item, index) => {
+    (profile.today.nutrition || []).forEach((item, index) => {
         if (document.getElementById(`food${index}`).checked) {
             calories += item.nutrition.calories;
             protein += item.nutrition.protein || 0;
@@ -76,13 +102,13 @@ function updateTotals() {
             caffeine += item.nutrition.caffeine_mg || 0;
         }
     });
-    profile.today.supplementsTaken.forEach((supp, index) => {
+    (profile.today.supplementsTaken || []).forEach((supp, index) => {
         if (document.getElementById(`supp${index}`).checked) {
             caffeine += supp.caffeine_mg || 0;
         }
     });
-    const burned = profile.today.activity.reduce((sum, act) => sum + parseInt(act.estimated_calories_burned || "0"), 0);
-    steps = profile.today.activity.reduce((sum, act) => sum + (act.steps || 0), 0);
+    const burned = (profile.today.activity || []).reduce((sum, act) => sum + parseInt(act.estimated_calories_burned || "0"), 0);
+    steps = (profile.today.activity || []).reduce((sum, act) => sum + (act.steps || 0), 0);
 
     document.getElementById("calories").innerText = calories;
     document.getElementById("protein").innerText = protein;
@@ -218,8 +244,7 @@ function updateVitals() {
 
     if (weight || systolic || diastolic || energy || heartRate) {
         profile.today.vitals.weight = weight || profile.today.vitals.weight;
-        profile.today.vitals.blood_pressure.systolic = systolic || profile.today.vitals.blood_pressure.systolic;
-        profile.today.vitals.blood_pressure.diastolic = diastolic || profile.today.vitals.blood_pressure.diastolic;
+        profile.today.vitals.blood_pressure = { systolic: systolic || profile.today.vitals.blood_pressure?.systolic, diastolic: diastolic || profile.today.vitals.blood_pressure?.diastolic };
         profile.today.vitals.energy_level = energy || profile.today.vitals.energy_level;
         profile.today.vitals.heart_rate = heartRate || profile.today.vitals.heart_rate;
 
@@ -255,12 +280,12 @@ function clearInputs(section) {
 
 function populateSupplements() {
     const datalist = document.getElementById("supplementList");
-    datalist.innerHTML = profile.masterList.supplements.map(supp => `<option value="${supp.name}">`).join("");
+    datalist.innerHTML = (profile.masterList.supplements || []).map(supp => `<option value="${supp.name}">`).join("");
 }
 
 function loadShoppingList() {
     const shoppingList = document.getElementById("shoppingList");
-    shoppingList.innerHTML = profile.shoppingList.stores[0].items.map((item, index) => 
+    shoppingList.innerHTML = (profile.shoppingList.stores[0].items || []).map((item, index) => 
         `<div class="shop-item">
             <input type="text" id="shopName${index}" value="${item.name}">
             <input type="text" id="shopQty${index}" value="${item.quantity}">
@@ -310,8 +335,8 @@ function renderTrends() {
     if (chart) chart.destroy();
 
     if (toggle === "activity") {
-        const steps = days.map(day => profile.days[day].activity.reduce((sum, act) => sum + (act.steps || 0), 0));
-        const burned = days.map(day => profile.days[day].activity.reduce((sum, act) => sum + parseInt(act.estimated_calories_burned || "0"), 0));
+        const steps = days.map(day => (profile.days[day].activity || []).reduce((sum, act) => sum + (act.steps || 0), 0));
+        const burned = days.map(day => (profile.days[day].activity || []).reduce((sum, act) => sum + parseInt(act.estimated_calories_burned || "0"), 0));
         chart = new Chart(ctx, {
             type: "line",
             data: {
@@ -344,14 +369,14 @@ function renderTrends() {
             options: { scales: { y: { beginAtZero: true } } }
         });
     } else if (toggle === "diet") {
-        const calories = days.map(day => profile.days[day].nutrition.reduce((sum, item) => sum + item.nutrition.calories, 0));
-        const protein = days.map(day => profile.days[day].nutrition.reduce((sum, item) => sum + (item.nutrition.protein || 0), 0));
-        const carbs = days.map(day => profile.days[day].nutrition.reduce((sum, item) => sum + (item.nutrition.carbs || 0), 0));
-        const fats = days.map(day => profile.days[day].nutrition.reduce((sum, item) => sum + (item.nutrition.fat || 0), 0));
-        const sugar = days.map(day => profile.days[day].nutrition.reduce((sum, item) => sum + (item.nutrition.sugar || 0), 0));
+        const calories = days.map(day => (profile.days[day].nutrition || []).reduce((sum, item) => sum + item.nutrition.calories, 0));
+        const protein = days.map(day => (profile.days[day].nutrition || []).reduce((sum, item) => sum + (item.nutrition.protein || 0), 0));
+        const carbs = days.map(day => (profile.days[day].nutrition || []).reduce((sum, item) => sum + (item.nutrition.carbs || 0), 0));
+        const fats = days.map(day => (profile.days[day].nutrition || []).reduce((sum, item) => sum + (item.nutrition.fat || 0), 0));
+        const sugar = days.map(day => (profile.days[day].nutrition || []).reduce((sum, item) => sum + (item.nutrition.sugar || 0), 0));
         const caffeine = days.map(day => 
-            profile.days[day].nutrition.reduce((sum, item) => sum + (item.nutrition.caffeine_mg || 0), 0) +
-            profile.days[day].supplementsTaken.reduce((sum, supp) => sum + (supp.caffeine_mg || 0), 0)
+            (profile.days[day].nutrition || []).reduce((sum, item) => sum + (item.nutrition.caffeine_mg || 0), 0) +
+            (profile.days[day].supplementsTaken || []).reduce((sum, supp) => sum + (supp.caffeine_mg || 0), 0)
         );
         chart = new Chart(ctx, {
             type: "line",
@@ -369,7 +394,7 @@ function renderTrends() {
             options: { scales: { y: { beginAtZero: true } } }
         });
     } else if (toggle === "mood") {
-        const intensities = days.map(day => profile.days[day].mood.reduce((sum, m) => sum + m.intensity, 0) / (profile.days[day].mood.length || 1));
+        const intensities = days.map(day => (profile.days[day].mood || []).reduce((sum, m) => sum + m.intensity, 0) / (profile.days[day].mood.length || 1));
         chart = new Chart(ctx, {
             type: "line",
             data: {
@@ -381,7 +406,7 @@ function renderTrends() {
             options: { scales: { y: { min: 0, max: 10 } } }
         });
     } else if (toggle === "symptoms") {
-        const severities = days.map(day => profile.days[day].symptoms.reduce((sum, s) => sum + s.severity, 0) / (profile.days[day].symptoms.length || 1));
+        const severities = days.map(day => (profile.days[day].symptoms || []).reduce((sum, s) => sum + s.severity, 0) / (profile.days[day].symptoms.length || 1));
         chart = new Chart(ctx, {
             type: "line",
             data: {

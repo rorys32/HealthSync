@@ -1,0 +1,92 @@
+// HealthSync Version 1.1.004
+{
+    "config": {
+      "moods": ["Happy", "Sad", "Anxious", "Calm", "Angry", "Confused", "Overwhelmed", "Genius"]
+    },
+    "calorieGoal": 1700,
+    "proteinGoal": 130,
+    "waterGoal": 85,
+    "today": {
+      "nutrition": [
+        {"food": "Rana Lobster Ravioli", "quantity": "1.3 cups", "nutrition": {"calories": 338, "protein": 13, "carbs": 40, "fat": 16, "fiber": 2.6, "calcium": 130, "sodium": 611, "sugar": 0, "caffeine_mg": 0}},
+        {"food": "Vodka Sauce", "quantity": "0.5 cup", "nutrition": {"calories": 170, "protein": 3, "carbs": 12, "fat": 12, "fiber": 2, "calcium": 50, "sodium": 480, "sugar": 6, "caffeine_mg": 0}},
+        {"food": "Coffee with Whole Milk", "quantity": "1 cup coffee + 4 oz milk", "nutrition": {"calories": 77, "protein": 4, "carbs": 6, "fat": 4, "fiber": 0, "calcium": 150, "sodium": 65, "sugar": 6, "caffeine_mg": 95}},
+        {"food": "Tropicana Orange Juice", "quantity": "8 oz", "nutrition": {"calories": 110, "protein": 0, "carbs": 26, "fat": 0, "fiber": 0, "calcium": 0, "sodium": 0, "sugar": 22, "vitamin_c": 72, "potassium": 450, "caffeine_mg": 0}},
+        {"food": "Tea", "quantity": "1 cup", "nutrition": {"calories": 2, "protein": 0, "carbs": 0, "fat": 0, "fiber": 0, "calcium": 0, "sodium": 0, "sugar": 0, "caffeine_mg": 47}},
+        {"food": "Iced Tea", "quantity": "1 cup", "nutrition": {"calories": 2, "protein": 0, "carbs": 0, "fat": 0, "fiber": 0, "calcium": 0, "sodium": 0, "sugar": 0, "caffeine_mg": 47}}
+      ],
+      "water": {"consumed": 32, "goal": 85},
+      "supplementsTaken": [
+        {"name": "Burn Evolved", "quantity": "2 caps", "caffeine_mg": 260, "time": "morning"},
+        {"name": "Lion’s Mane", "quantity": "2 caps (8400 mg)", "caffeine_mg": 0, "time": "mid-morning"}
+      ],
+      "medicationsTaken": [{"name": "Losartan", "quantity": "50 mg", "time": "mid-morning"}],
+      "activity": [{"type": "walking", "steps": 2213, "estimated_calories_burned": "144", "time": "mid-morning"}],
+      "vitals": {"weight": 245, "height": 71, "bmi": 34.2, "blood_pressure": {"systolic": null, "diastolic": null}, "energy_level": null, "heart_rate": null},
+      "mood": [],
+      "symptoms": [],
+      "workoutCompleted": false
+    },
+    "days": {
+      "2025-03-07": {
+        "nutrition": [
+          {"food": "Rana Lobster Ravioli", "quantity": "1.3 cups", "nutrition": {"calories": 338, "protein": 13, "carbs": 40, "fat": 16, "fiber": 2.6, "calcium": 130, "sodium": 611, "sugar": 0, "caffeine_mg": 0}},
+          {"food": "Vodka Sauce", "quantity": "0.5 cup", "nutrition": {"calories": 170, "protein": 3, "carbs": 12, "fat": 12, "fiber": 2, "calcium": 50, "sodium": 480, "sugar": 6, "caffeine_mg": 0}},
+          {"food": "Coffee with Whole Milk", "quantity": "1 cup coffee + 4 oz milk", "nutrition": {"calories": 77, "protein": 4, "carbs": 6, "fat": 4, "fiber": 0, "calcium": 150, "sodium": 65, "sugar": 6, "caffeine_mg": 95}},
+          {"food": "Tropicana Orange Juice", "quantity": "8 oz", "nutrition": {"calories": 110, "protein": 0, "carbs": 26, "fat": 0, "fiber": 0, "calcium": 0, "sodium": 0, "sugar": 22, "vitamin_c": 72, "potassium": 450, "caffeine_mg": 0}},
+          {"food": "Tea", "quantity": "1 cup", "nutrition": {"calories": 2, "protein": 0, "carbs": 0, "fat": 0, "fiber": 0, "calcium": 0, "sodium": 0, "sugar": 0, "caffeine_mg": 47}},
+          {"food": "Iced Tea", "quantity": "1 cup", "nutrition": {"calories": 2, "protein": 0, "carbs": 0, "fat": 0, "fiber": 0, "calcium": 0, "sodium": 0, "sugar": 0, "caffeine_mg": 47}}
+        ],
+        "water": {"consumed": 32},
+        "supplementsTaken": [
+          {"name": "Burn Evolved", "quantity": "2 caps", "caffeine_mg": 260, "time": "morning"},
+          {"name": "Lion’s Mane", "quantity": "2 caps (8400 mg)", "caffeine_mg": 0, "time": "mid-morning"}
+        ],
+        "medicationsTaken": [{"name": "Losartan", "quantity": "50 mg", "time": "mid-morning"}],
+        "activity": [{"type": "walking", "steps": 2213, "estimated_calories_burned": "144", "time": "mid-morning"}],
+        "vitals": {"weight": 245, "blood_pressure": {"systolic": null, "diastolic": null}, "energy_level": null, "heart_rate": null},
+        "mood": [],
+        "symptoms": []
+      }
+    },
+    "masterList": {
+      "foods": [
+        {"name": "Rana Lobster Ravioli", "serving_size": "1 cup (107g)", "nutrition": {"calories": 260, "protein": 10, "carbs": 31, "fat": 12, "fiber": 2, "calcium": 100, "sodium": 470, "sugar": 0, "caffeine_mg": 0}},
+        {"name": "Vodka Sauce", "serving_size": "0.5 cup (125g)", "nutrition": {"calories": 170, "protein": 3, "carbs": 12, "fat": 12, "fiber": 2, "calcium": 50, "sodium": 480, "sugar": 6, "caffeine_mg": 0}},
+        {"name": "Coffee", "serving_size": "1 cup (8 oz)", "nutrition": {"calories": 2, "protein": 0, "carbs": 0, "fat": 0, "fiber": 0, "calcium": 0, "sodium": 5, "sugar": 0, "caffeine_mg": 95}},
+        {"name": "Whole Milk", "serving_size": "4 oz", "nutrition": {"calories": 75, "protein": 4, "carbs": 6, "fat": 4, "fiber": 0, "calcium": 150, "sodium": 60, "sugar": 6, "caffeine_mg": 0}},
+        {"name": "Tropicana Orange Juice", "serving_size": "8 oz", "nutrition": {"calories": 110, "protein": 0, "carbs": 26, "fat": 0, "fiber": 0, "calcium": 0, "sodium": 0, "sugar": 22, "vitamin_c": 72, "potassium": 450, "caffeine_mg": 0}},
+        {"name": "Publix Protein Bowl (No Chicken)", "serving_size": "1 bowl", "nutrition": {"calories": 325, "protein": 6, "carbs": 52, "fat": 6, "fiber": 3.5, "calcium": 50, "sodium": 700, "sugar": 5, "caffeine_mg": 0}},
+        {"name": "Tea", "serving_size": "1 cup", "nutrition": {"calories": 2, "protein": 0, "carbs": 0, "fat": 0, "fiber": 0, "calcium": 0, "sodium": 0, "sugar": 0, "caffeine_mg": 47}},
+        {"name": "Iced Tea", "serving_size": "1 cup", "nutrition": {"calories": 2, "protein": 0, "carbs": 0, "fat": 0, "fiber": 0, "calcium": 0, "sodium": 0, "sugar": 0, "caffeine_mg": 47}}
+      ],
+      "supplements": [
+        {"name": "Lion’s Mane", "serving_size": "1 cap (4200 mg)", "caffeine_mg": 0, "purpose": "focus, stress"},
+        {"name": "TestBoost Max", "serving_size": "2 caps", "caffeine_mg": 0, "purpose": "T boost"},
+        {"name": "BPC-157", "serving_size": "1 cap (1000 mcg)", "caffeine_mg": 0, "purpose": "recovery"},
+        {"name": "Burn Evolved", "serving_size": "1 cap", "caffeine_mg": 130, "purpose": "fat burn"},
+        {"name": "Magnesium Glycinate", "serving_size": "1 cap (120 mg)", "caffeine_mg": 0, "purpose": "sleep, BP"},
+        {"name": "Ashwagandha", "serving_size": "1 cap (150 mg)", "caffeine_mg": 0, "purpose": "cortisol, sleep"}
+      ],
+      "medications": [
+        {"name": "Losartan", "serving_size": "50 mg", "purpose": "blood pressure"}
+      ],
+      "activities": [
+        {"name": "Walking", "unit": "steps", "calories_per_1000_steps": "45-70"}
+      ]
+    },
+    "shoppingList": {
+      "stores": [
+        {
+          "name": "Walmart",
+          "items": [
+            {"name": "Eggs", "quantity": "12 count", "purpose": "protein (no chicken today)"},
+            {"name": "Sweet Potatoes", "quantity": "4 medium", "purpose": "carbs, fiber"},
+            {"name": "Greek Yogurt (Plain)", "quantity": "32 oz", "purpose": "protein, calcium"},
+            {"name": "Broccoli (Frozen)", "quantity": "2 bags (16 oz each)", "purpose": "fiber, calcium"},
+            {"name": "Tilapia Fillets", "quantity": "2 lbs", "purpose": "lean protein (fish)"}
+          ]
+        }
+      ]
+    }
+  }

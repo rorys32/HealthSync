@@ -1,4 +1,4 @@
-<!-- HealthSync Version 1.1.003 -->
+<!-- HealthSync Version 1.1.004 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -85,6 +85,9 @@
                     <option value="Anxious">Anxious</option>
                     <option value="Calm">Calm</option>
                     <option value="Angry">Angry</option>
+                    <option value="Confused">Confused</option>
+                    <option value="Overwhelmed">Overwhelmed</option>
+                    <option value="Genius">Genius</option>
                 </select>
                 <input type="number" id="moodIntensity" placeholder="Intensity (1-10)">
                 <input type="text" id="moodNotes" placeholder="Notes">
@@ -127,7 +130,7 @@
             <canvas id="trendChart" width="400" height="200"></canvas>
         </section>
         <button onclick="saveData()">Save Data as JSON</button>
-        <footer>HealthSync v1.1.003</footer>
+        <footer>HealthSync v1.1.004</footer>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="script.js"></script>
