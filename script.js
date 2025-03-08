@@ -1,4 +1,4 @@
-// HealthSync Version 1.1.004
+// HealthSync Version 1.1.005
 let profile;
 let chart;
 
@@ -6,11 +6,7 @@ fetch('data.json')
     .then(response => response.json())
     .then(data => {
         profile = data;
-        loadChecklist();
-        updateTotals();
-        populateSupplements();
-        loadShoppingList();
-        renderTrends();
+        initializeApp();
     })
     .catch(() => {
         console.warn("Failed to load data.json - using fallback profile");
@@ -20,20 +16,20 @@ fetch('data.json')
                 nutrition: [],
                 water: { consumed: 0, goal: 85 },
                 supplementsTaken: [],
-                medicationsTaken: [], // Initialized to prevent undefined errors
+                medicationsTaken: [],
                 activity: [],
                 vitals: {},
-                mood: [], // Initialized to prevent undefined errors
-                symptoms: [] // Initialized to prevent undefined errors
+                mood: [],
+                symptoms: []
             },
             days: {},
             masterList: { foods: [], supplements: [] },
             shoppingList: { stores: [{ name: "Walmart", items: [] }] }
         };
-        loadChecklist();
+        initializeApp();
     });
 
-function loadChecklist() {
+function initializeApp() {
     const today = new Date().toISOString().split('T')[0];
     if (!profile.days) profile.days = {};
     if (!profile.days[today]) {
@@ -41,14 +37,28 @@ function loadChecklist() {
             nutrition: [],
             water: { consumed: 0 },
             supplementsTaken: [],
-            medicationsTaken: [], // Initialized
+            medicationsTaken: [],
             activity: [],
             vitals: {},
-            mood: [], // Initialized
-            symptoms: [] // Initialized
+            mood: [],
+            symptoms: []
         };
     }
+    profile.today = profile.days[today];
 
+    // Dynamically populate mood dropdown
+    const moodSelect = document.getElementById("moodType");
+    moodSelect.innerHTML = profile.config.moods.map(mood => `<option value="${mood}">${mood}</option>`).join("");
+
+    loadChecklist();
+    updateTotals();
+    populateSupplements();
+    loadShoppingList();
+    renderTrends();
+}
+
+function loadChecklist() {
+    const today = new Date().toISOString().split('T')[0];
     const daily = profile.days[today];
     const foodBeverage = document.getElementById("foodBeverage");
     foodBeverage.innerHTML = (profile.today.nutrition || []).map((item, index) => 
