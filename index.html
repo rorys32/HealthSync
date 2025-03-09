@@ -1,129 +1,98 @@
-<!-- HealthSync Version 1.1.005 -->
+<!-- HealthSync Version 1.1.010 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HealthSync - March 7, 2025</title>
+    <title>HealthSync - Daily Log</title>
     <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-    <div class="container">
+    <header>
         <h1>HealthSync</h1>
-        <section id="daily">
-            <h2>Daily Log - <span id="currentDate"></span></h2>
-            <div>
-                <h3>Food and Beverage</h3>
-                <div id="foodBeverage"></div>
-            </div>
-            <div>
-                <h3>Supplements</h3>
-                <div id="supplements"></div>
-            </div>
-            <div>
-                <h3>Medications</h3>
-                <div id="medications"></div>
-            </div>
-            <div>
-                <h3>Mood</h3>
-                <div id="mood"></div>
-            </div>
-            <div>
-                <h3>Symptoms</h3>
-                <div id="symptoms"></div>
+        <p id="currentDate"></p>
+    </header>
+    <main>
+        <section id="dailyLog">
+            <h2>Daily Log</h2>
+            <ul id="logEntries"></ul>
+            <div id="trendSummary">
+                <h3>Weekly Trends</h3>
+                <canvas id="weightChart" height="100"></canvas>
+                <canvas id="stepsChart" height="100"></canvas>
+                <canvas id="bpChart" height="100"></canvas>
+                <ul id="exerciseTrends"></ul>
             </div>
         </section>
-        <section>
-            <h2>Totals</h2>
-            <p>Calories: <span id="calories">0</span> - <span id="burned">0</span> = <span id="net">0</span> / <span id="calGoal"></span></p>
-            <p>Protein: <span id="protein">0</span> / <span id="proteinGoal"></span>g</p>
-            <p>Carbs: <span id="carbs">0</span>g</p>
-            <p>Fats: <span id="fats">0</span>g</p>
-            <p>Sugar: <span id="sugar">0</span>g</p>
-            <p>Caffeine: <span id="caffeine">0</span> mg <span id="caffeineWarning"></span></p>
-            <p>Water: <span id="water">0</span> / <span id="waterGoal"></span> oz</p>
-            <p>Steps: <span id="steps">0</span></p>
-        </section>
-        <section>
-            <h2>Log New Data</h2>
-            <div>
-                <h3>Food</h3>
-                <input type="text" id="foodName" placeholder="Food Name">
-                <input type="text" id="quantity" placeholder="Quantity">
-                <input type="number" id="caloriesInput" placeholder="Calories">
-                <input type="number" id="proteinInput" placeholder="Protein (g)">
-                <input type="number" id="carbsInput" placeholder="Carbs (g)">
-                <input type="number" id="fatsInput" placeholder="Fats (g)">
-                <input type="number" id="sugarInput" placeholder="Sugar (g)">
-                <input type="number" id="caffeineInput" placeholder="Caffeine (mg)">
-                <button onclick="addFood()">Add Food</button>
-                <input type="file" id="nutritionPhoto" accept="image/*" onchange="parseNutritionPhoto()">
+        <section id="loggingControls">
+            <h2>Log Your Day</h2>
+            <div id="morningRoutine">
+                <h3>Morning Routine</h3>
+                <div id="supplements">
+                    <h4>Supplements & Medications</h4>
+                    <ul id="supplementList"></ul>
+                    <button id="addSupplement">Add New</button>
+                    <button id="logAllSupplements">Log All</button>
+                </div>
+                <div id="water">
+                    <h4>Water Intake</h4>
+                    <progress id="waterProgress" value="0" max="64"></progress>
+                    <p>Goal: 64 oz</p>
+                    <button class="waterBtn" data-oz="8">+8 oz</button>
+                    <button class="waterBtn" data-oz="16">+16 oz</button>
+                </div>
+                <div id="weight">
+                    <h4>Weight</h4>
+                    <input type="number" id="weightInput" placeholder="Enter weight (lbs)">
+                    <button id="logWeight">Log Weight</button>
+                </div>
             </div>
-            <div>
-                <h3>Activity</h3>
-                <input type="text" id="activityType" placeholder="Type (e.g., Walking)">
-                <input type="number" id="stepsInput" placeholder="Steps">
-                <input type="number" id="durationInput" placeholder="Duration (min)">
-                <input type="number" id="caloriesBurnedInput" placeholder="Calories Burned">
-                <button onclick="addActivity()">Add Activity</button>
-            </div>
-            <div>
-                <h3>Supplement</h3>
-                <input type="text" id="supplementName" placeholder="Supplement Name" list="supplementList">
-                <datalist id="supplementList"></datalist>
-                <input type="text" id="suppQuantity" placeholder="Quantity">
-                <input type="number" id="suppCaffeine" placeholder="Caffeine (mg)">
-                <input type="time" id="suppTime">
-                <button onclick="addSupplement()">Add Supplement</button>
-            </div>
-            <div>
-                <h3>Mood</h3>
-                <select id="moodType"></select>
-                <input type="number" id="moodIntensity" placeholder="Intensity (1-10)">
-                <input type="text" id="moodNotes" placeholder="Notes">
-                <button onclick="addMood()">Add Mood</button>
-            </div>
-            <div>
-                <h3>Symptom</h3>
-                <input type="text" id="symptomName" placeholder="Symptom (e.g., Headache)">
-                <input type="number" id="symptomSeverity" placeholder="Severity (1-10)">
-                <input type="text" id="symptomNotes" placeholder="Notes">
-                <button onclick="addSymptom()">Add Symptom</button>
-            </div>
-            <div>
-                <h3>Vitals</h3>
-                <input type="number" id="weightInput" placeholder="Weight (lbs)">
-                <input type="number" id="bpSystolic" placeholder="BP Systolic">
-                <input type="number" id="bpDiastolic" placeholder="BP Diastolic">
-                <input type="number" id="energyInput" placeholder="Energy (1-10)">
-                <input type="number" id="heartRateInput" placeholder="Heart Rate (bpm)">
-                <button onclick="updateVitals()">Update Vitals</button>
+            <div id="logNewData">
+                <h3>Log New Data</h3>
+                <div id="steps">
+                    <h4>Steps</h4>
+                    <input type="number" id="stepInput" placeholder="Enter steps">
+                    <progress id="stepProgress" value="0" max="10000"></progress>
+                    <p>Goal: 10000 steps</p>
+                    <button id="logSteps">Log Steps</button>
+                </div>
+                <div id="bloodPressure">
+                    <h4>Blood Pressure</h4>
+                    <input type="number" id="systolicInput" placeholder="Systolic (mmHg)">
+                    <input type="number" id="diastolicInput" placeholder="Diastolic (mmHg)">
+                    <button id="logBloodPressure">Log BP</button>
+                </div>
+                <div id="food">
+                    <h4>Food</h4>
+                    <input type="text" id="foodInput" placeholder="Enter food (e.g., Oatmeal)">
+                    <button id="logFood">Log Food</button>
+                </div>
+                <div id="exercise">
+                    <h4>Exercise</h4>
+                    <input type="text" id="exerciseInput" placeholder="Enter exercise (e.g., Run)">
+                    <button id="logExercise">Log Exercise</button>
+                </div>
+                <div id="mood">
+                    <h4>Mood</h4>
+                    <select id="moodSelect">
+                        <option value="Happy">Happy</option>
+                        <option value="Sad">Sad</option>
+                        <option value="Anxious">Anxious</option>
+                        <option value="Calm">Calm</option>
+                        <option value="Custom">Custom</option>
+                    </select>
+                    <input type="text" id="customMoodInput" placeholder="Enter custom mood" style="display: none;">
+                    <button id="logMood">Log Mood</button>
+                </div>
             </div>
         </section>
-        <section>
-            <h2>Shopping List</h2>
-            <div id="shoppingList"></div>
-            <input type="text" id="shopItemName" placeholder="Item Name">
-            <input type="text" id="shopQuantity" placeholder="Quantity">
-            <input type="text" id="shopPurpose" placeholder="Purpose">
-            <button onclick="addShoppingItem()">Add Item</button>
+        <section id="testingControls">
+            <h2>Testing Controls</h2>
+            <button id="loadSampleDataBtn">Load 3-Day Sample Data</button>
+            <button id="resetDataBtn">Reset Data</button>
         </section>
-        <section>
-            <h2>Trends</h2>
-            <select id="trendToggle" onchange="renderTrends()">
-                <option value="activity">Activity</option>
-                <option value="vitals">Vitals</option>
-                <option value="diet">Diet</option>
-                <option value="mood">Mood</option>
-                <option value="symptoms">Symptoms</option>
-            </select>
-            <canvas id="trendChart" width="400" height="200"></canvas>
-        </section>
-        <button onclick="saveData()">Save Data as JSON</button>
-        <footer>HealthSync v1.1.005</footer>
-    </div>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    </main>
     <script src="script.js"></script>
 </body>
 </html>
