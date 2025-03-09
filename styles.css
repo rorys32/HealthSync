@@ -1,15 +1,15 @@
-/* HealthSync Version 1.1.010 */
+/* HealthSync Version 1.1.012 */
 body {
     font-family: 'Segoe UI', Arial, sans-serif;
     margin: 0;
-    padding: 20px;
+    padding: 10px;
     background-color: #f0f2f5;
     color: #333;
 }
 
 header {
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
     background: #4a90e2;
     padding: 10px;
     color: white;
@@ -17,30 +17,40 @@ header {
 }
 
 main {
-    max-width: 900px;
+    max-width: 90%;
     margin: 0 auto;
     display: grid;
-    gap: 20px;
+    gap: 15px;
 }
 
 section {
     background: white;
-    padding: 20px;
+    padding: 15px;
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
 #dailyLog, #loggingControls {
     display: grid;
-    gap: 15px;
+    gap: 10px;
+}
+
+#logQuadrants {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+#vitalsQuadrant, #intakeQuadrant, #activityQuadrant, #moodSupplementsQuadrant {
+    min-height: 100px;
 }
 
 #trendSummary {
-    margin-top: 15px;
+    margin-top: 10px;
 }
 
 h2, h3, h4 {
-    margin: 0 0 10px;
+    margin: 0 0 8px;
     color: #4a90e2;
 }
 
@@ -51,13 +61,13 @@ progress {
 }
 
 button {
-    padding: 8px 16px;
+    padding: 6px 12px;
     background: #4a90e2;
     color: white;
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    margin-right: 5px;
+    margin: 2px;
 }
 
 button:hover {
@@ -65,11 +75,17 @@ button:hover {
 }
 
 input[type="number"], input[type="text"], select {
-    padding: 8px;
+    padding: 6px;
     border: 1px solid #ddd;
     border-radius: 5px;
-    margin-right: 5px;
-    width: 100px;
+    margin: 2px;
+    width: 80px;
+}
+
+#bloodPressure, #mood {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
 }
 
 #testingControls {
@@ -82,28 +98,35 @@ ul {
 }
 
 li {
-    padding: 5px 0;
+    padding: 4px 0;
 }
 
 canvas {
-    margin-bottom: 20px;
+    margin-bottom: 15px;
+    width: 100% !important;
 }
 
 /* Responsive Design */
-@media (max-width: 600px) {
+@media (max-width: 500px) {
     main {
-        padding: 10px;
+        padding: 5px;
     }
     section {
-        padding: 15px;
+        padding: 10px;
+    }
+    #logQuadrants {
+        grid-template-columns: 1fr;
     }
     input[type="number"], input[type="text"], select {
-        width: 80px;
+        width: 70px;
     }
     button {
-        padding: 6px 12px;
+        padding: 5px 10px;
     }
     canvas {
-        height: 150px !important;
+        height: 120px !important;
+    }
+    #supplementList li {
+        font-size: 14px;
     }
 }

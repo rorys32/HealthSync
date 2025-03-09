@@ -1,4 +1,4 @@
-<!-- HealthSync Version 1.1.010 -->
+<!-- HealthSync Version 1.1.012 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -16,7 +16,24 @@
     <main>
         <section id="dailyLog">
             <h2>Daily Log</h2>
-            <ul id="logEntries"></ul>
+            <div id="logQuadrants">
+                <div id="vitalsQuadrant">
+                    <h4>Vitals</h4>
+                    <ul id="vitalsEntries"></ul>
+                </div>
+                <div id="intakeQuadrant">
+                    <h4>Intake</h4>
+                    <ul id="intakeEntries"></ul>
+                </div>
+                <div id="activityQuadrant">
+                    <h4>Activity</h4>
+                    <ul id="activityEntries"></ul>
+                </div>
+                <div id="moodSupplementsQuadrant">
+                    <h4>Mood & Supplements</h4>
+                    <ul id="moodSupplementsEntries"></ul>
+                </div>
+            </div>
             <div id="trendSummary">
                 <h3>Weekly Trends</h3>
                 <canvas id="weightChart" height="100"></canvas>
@@ -89,7 +106,7 @@
         </section>
         <section id="testingControls">
             <h2>Testing Controls</h2>
-            <button id="loadSampleDataBtn">Load 3-Day Sample Data</button>
+            <button id="loadSampleDataBtn">Load 5-Day Sample Data</button>
             <button id="resetDataBtn">Reset Data</button>
         </section>
     </main>

@@ -1,4 +1,4 @@
-// HealthSync Version 1.1.010
+// HealthSync Version 1.1.012
 document.addEventListener('DOMContentLoaded', () => {
     const currentDate = document.getElementById('currentDate');
     const supplementList = document.getElementById('supplementList');
@@ -21,11 +21,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const moodSelect = document.getElementById('moodSelect');
     const customMoodInput = document.getElementById('customMoodInput');
     const logMoodBtn = document.getElementById('logMood');
-    const logEntries = document.getElementById('logEntries');
+    const vitalsEntries = document.getElementById('vitalsEntries');
+    const intakeEntries = document.getElementById('intakeEntries');
+    const activityEntries = document.getElementById('activityEntries');
+    const moodSupplementsEntries = document.getElementById('moodSupplementsEntries');
     const exerciseTrends = document.getElementById('exerciseTrends');
 
-    // Date handling (hardcoded for testing)
-    const today = "2025-03-09";
+    // Date handling
+    const today = new Date().toISOString().split('T')[0];
     currentDate.textContent = new Date(today).toLocaleDateString();
 
     // Load or initialize daily data
@@ -38,18 +41,28 @@ document.addEventListener('DOMContentLoaded', () => {
     stepProgress.value = totalSteps;
     waterProgress.value = totalWater;
 
-    // Render daily log
+    // Render daily log into quadrants
     function renderLog() {
-        logEntries.innerHTML = '';
+        vitalsEntries.innerHTML = '';
+        intakeEntries.innerHTML = '';
+        activityEntries.innerHTML = '';
+        moodSupplementsEntries.innerHTML = '';
+
         const waterEntry = document.createElement('li');
-        waterEntry.id = 'waterEntry';
         waterEntry.textContent = `Water: ${totalWater} oz / 64 oz`;
-        logEntries.appendChild(waterEntry);
+        intakeEntries.appendChild(waterEntry);
+
         dailyData[today].log.forEach(entry => {
-            if (!entry.startsWith('Water:')) {
-                const li = document.createElement('li');
-                li.textContent = entry;
-                logEntries.appendChild(li);
+            const li = document.createElement('li');
+            li.textContent = entry;
+            if (entry.startsWith('Weight:') || entry.startsWith('Blood Pressure:')) {
+                vitalsEntries.appendChild(li);
+            } else if (entry.startsWith('Meal logged:')) {
+                intakeEntries.appendChild(li);
+            } else if (entry.startsWith('Steps:') || entry.startsWith('Exercise logged:')) {
+                activityEntries.appendChild(li);
+            } else if (entry.startsWith('Mood:') || entry.includes('logged') && !entry.startsWith('Meal logged:')) {
+                moodSupplementsEntries.appendChild(li);
             }
         });
     }
@@ -197,6 +210,18 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Blood Pressure Logging
+    systolicInput.addEventListener('input', () => {
+        if (systolicInput.value.length > 3) {
+            systolicInput.value = systolicInput.value.slice(0, 3);
+        }
+    });
+
+    diastolicInput.addEventListener('input', () => {
+        if (diastolicInput.value.length > 3) {
+            diastolicInput.value = diastolicInput.value.slice(0, 3);
+        }
+    });
+
     logBloodPressureBtn.addEventListener('click', () => {
         const systolic = systolicInput.value;
         const diastolic = diastolicInput.value;
@@ -277,6 +302,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
     loadSampleDataBtn.addEventListener('click', () => {
         dailyData = {
+            "2025-03-05": {
+                steps: 7000,
+                water: 40,
+                weight: "153",
+                bloodPressure: { systolic: "116", diastolic: "76" },
+                log: ["Vitamin D, 2000 IU logged", "Water: 40 oz / 64 oz", "Weight: 153 lbs", "Steps: 7000 / 10000", "Blood Pressure: 116/76 mmHg", "Meal logged: Coffee, ~5 kcal", "Exercise logged: Swimming", "Mood: Energetic"],
+                exercises: ["Swimming"]
+            },
+            "2025-03-06": {
+                steps: 8500,
+                water: 56,
+                weight: "152",
+                bloodPressure: { systolic: "119", diastolic: "79" },
+                log: ["Losartan, 50 mg logged", "Water: 56 oz / 64 oz", "Weight: 152 lbs", "Steps: 8500 / 10000", "Blood Pressure: 119/79 mmHg", "Meal logged: Oatmeal, ~150 kcal", "Exercise logged: Jiu Jitsu", "Mood: Happy"],
+                exercises: ["Jiu Jitsu"]
+            },
             "2025-03-07": {
                 steps: 8000,
                 water: 48,
