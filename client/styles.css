@@ -85,7 +85,7 @@ input[type="number"], input[type="text"], select {
     padding: 8px;
     border: 1px solid #ddd;
     border-radius: 5px;
-    width: 150px; /* Consistent width */
+    width: 150px;
 }
 
 .control-row {
@@ -117,7 +117,7 @@ input[type="number"], input[type="text"], select {
 }
 
 #newSupplementInput {
-    width: 150px; /* Match other inputs */
+    width: 150px;
 }
 
 #bloodPressure .control-row {
