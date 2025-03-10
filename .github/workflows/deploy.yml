@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - main
+      - health-sync-1.2
 
 jobs:
   deploy:
