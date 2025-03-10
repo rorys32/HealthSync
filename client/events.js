@@ -1,5 +1,6 @@
-// HealthSync Version 1.2.000 - Event Listeners
+// HealthSync Version 1.2.2 - Event Listeners
 document.addEventListener('DOMContentLoaded', async () => {
+    console.log('events.js loaded, starting login...');
     await login(); // Initial login
 
     const addSupplementBtn = document.getElementById('addSupplement');
@@ -150,6 +151,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     loadSampleDataBtn.addEventListener('click', async () => {
+        console.log('Button clicked! Loading sample data...');
+        if (!token) {
+            console.log('No token, logging in...');
+            await login();
+        }
         const sampleData = {
             "2025-03-05": {
                 steps: 7000,
@@ -205,16 +211,30 @@ document.addEventListener('DOMContentLoaded', async () => {
                 stepsLog: [{ steps: 2000, time: "2025-03-09T08:00:00" }, { steps: 3000, time: "2025-03-09T14:00:00" }],
                 moods: [{ mood: "Anxious", time: "2025-03-09T14:00:00" }],
                 symptoms: []
+            },
+            [today]: { 
+                steps: 0, 
+                water: 0, 
+                weight: null, 
+                bloodPressure: null, 
+                log: [], 
+                exercises: [], 
+                stepsLog: [], 
+                moods: [], 
+                symptoms: [] 
             }
         };
         Object.assign(userDailyData, sampleData);
+        console.log('Sample data loaded:', JSON.stringify(userDailyData, null, 2));
         supplements = ["Vitamin D, 2000 IU", "Losartan, 50 mg"];
         foods = ["Oatmeal", "Mixed Fruit", "Coffee"];
         await saveData();
+        console.log('Reloading page...');
         location.reload();
     });
 
     resetDataBtn.addEventListener('click', async () => {
+        console.log('Resetting data...');
         userDailyData = {};
         supplements = [];
         foods = [];
@@ -223,6 +243,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     saveDataBtn.addEventListener('click', () => {
+        console.log('Saving data to file...');
         const dataStr = JSON.stringify(userDailyData);
         const blob = new Blob([dataStr], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
@@ -234,12 +255,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     loadDataBtn.addEventListener('click', () => {
+        console.log('Triggering file load...');
         document.getElementById('loadDataInput').click();
     });
 
     document.getElementById('loadDataInput').addEventListener('change', async (event) => {
         const file = event.target.files[0];
         if (file) {
+            console.log('Loading data from file:', file.name);
             const reader = new FileReader();
             reader.onload = async (e) => {
                 userDailyData = JSON.parse(e.target.result);

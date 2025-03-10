@@ -1,5 +1,8 @@
-// HealthSync Version 1.1.015 - UI Rendering
+// HealthSync Version 1.2.2 - UI Rendering
+let charts = {}; // Store chart instances for cleanup
+
 function renderLog() {
+    console.log('Rendering log...');
     const vitalsEntries = document.getElementById('vitalsEntries');
     const intakeEntries = document.getElementById('intakeEntries');
     const activityEntries = document.getElementById('activityEntries');
@@ -33,6 +36,7 @@ function renderLog() {
 }
 
 function renderSupplements() {
+    console.log('Rendering supplements...');
     const supplementList = document.getElementById('supplementList');
     supplementList.innerHTML = '';
     supplements.forEach((sup, index) => {
@@ -43,13 +47,24 @@ function renderSupplements() {
 }
 
 function renderTrends() {
+    console.log('Rendering trends...');
     const dates = Object.keys(userDailyData).sort();
     const weights = dates.map(date => userDailyData[date].weight || null);
     const steps = dates.map(date => userDailyData[date].steps || 0);
-    const systolic = dates.map(date => userDailyData[date].bloodPressure?.systolic || null);
-    const diastolic = dates.map(date => userDailyData[date].bloodPressure?.diastolic || null);
+    const systolic = dates.map(date => userDailyData[date].bloodPressure ? userDailyData[date].bloodPressure.systolic : null);
+    const diastolic = dates.map(date => userDailyData[date].bloodPressure ? userDailyData[date].bloodPressure.diastolic : null);
 
-    new Chart(document.getElementById('weightChart'), {
+    console.log('Trend data:', { dates, weights, steps, systolic, diastolic });
+
+    // Destroy existing charts
+    ['weightChart', 'stepsChart', 'bpChart', 'hourlyStepsChart'].forEach(id => {
+        if (charts[id]) {
+            charts[id].destroy();
+            console.log(`Destroyed chart: ${id}`);
+        }
+    });
+
+    charts['weightChart'] = new Chart(document.getElementById('weightChart'), {
         type: 'line',
         data: {
             labels: dates,
@@ -63,7 +78,7 @@ function renderTrends() {
         options: { scales: { y: { beginAtZero: false } } }
     });
 
-    new Chart(document.getElementById('stepsChart'), {
+    charts['stepsChart'] = new Chart(document.getElementById('stepsChart'), {
         type: 'bar',
         data: {
             labels: dates,
@@ -76,7 +91,7 @@ function renderTrends() {
         options: { scales: { y: { beginAtZero: true } } }
     });
 
-    new Chart(document.getElementById('bpChart'), {
+    charts['bpChart'] = new Chart(document.getElementById('bpChart'), {
         type: 'line',
         data: {
             labels: dates,
@@ -96,7 +111,7 @@ function renderTrends() {
     const hours = Object.keys(hourlySteps).sort();
     const stepsPerHour = hours.map(hour => hourlySteps[hour]);
 
-    new Chart(document.getElementById('hourlyStepsChart'), {
+    charts['hourlyStepsChart'] = new Chart(document.getElementById('hourlyStepsChart'), {
         type: 'bar',
         data: {
             labels: hours,
@@ -111,7 +126,7 @@ function renderTrends() {
 
     const exerciseCount = {};
     Object.keys(userDailyData).forEach(date => {
-        userDailyData[date].exercises?.forEach(ex => {
+        userDailyData[date].exercises.forEach(ex => {
             exerciseCount[ex] = (exerciseCount[ex] || 0) + 1;
         });
     });
