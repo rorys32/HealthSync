@@ -1,0 +1,27 @@
+# HealthSync Design Prompt (Build 1.3.4) - March 11, 2025
+
+## Current Design
+- **Version**: 1.3.4
+- **Background**: Linear gradient (#1e3c72 to #2a5298)
+- **Container**: White (95% opacity), rounded (15px), shadow (0 8px 16px)
+- **Typography**: Roboto, 400/700 weights, white text with shadows
+- **Buttons**: Red (#ff6b6b), rounded (25px), hover scale (1.05)
+- **Footer**: "HealthSync v1.3.4 © Copyright 2025 Optcl.ai"
+- **Charts**: White background, rounded, padded
+
+## Goals
+- **Riveting**: Bold, engaging, memorable UI beyond basic.
+- **Usable**: Clean, intuitive for health tracking.
+- **Branded**: Reflects Optcl.ai identity (TBD: logo, colors).
+
+## Parameters to Define
+- **Color Scheme**: [User input: e.g., blue gradient, green health, purple sleek]
+- **Mood**: [User input: e.g., modern, warm, futuristic]
+- **Elements**: [User input: e.g., icons (Font Awesome), animations (fade-ins)]
+- **Layout**: [User input: e.g., stack, grid, card-based dashboard]
+- **Charts**: [User input: e.g., colored lines, gradients, tooltips]
+- **External Needs**: [User input: e.g., custom graphics, UX flows]
+
+## Next Steps
+- Answer design questions to refine.
+- Iterate in 1.3.5 or hire designer for pro polish.

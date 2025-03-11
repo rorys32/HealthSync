@@ -1,151 +1,114 @@
-<!-- HealthSync Version 1.2.000 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HealthSync - Daily Log</title>
-    <link rel="stylesheet" href="styles.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>HealthSync</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
-    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #1e3c72, #2a5298); /* Bold gradient */
+            color: #fff;
+        }
+        h1 { text-align: center; font-size: 2.5em; margin-bottom: 20px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+        .section { margin-bottom: 30px; }
+        button {
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.3s;
+        }
+        button:hover { transform: scale(1.05); background: #ff8787; }
+        input, select { padding: 8px; border-radius: 5px; border: 1px solid #ccc; }
+        progress { width: 100%; height: 20px; border-radius: 10px; }
+        canvas { background: #fff; border-radius: 10px; padding: 10px; }
+        footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.9em;
+            color: #ddd;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+    </style>
 </head>
 <body>
-    <header>
-        <h1>HealthSync</h1>
-        <p id="currentDate"></p>
-    </header>
-    <main>
-        <section id="dailyLog">
-            <h2>Daily Log</h2>
-            <div id="logQuadrants">
-                <div id="vitalsQuadrant">
-                    <h4>Vitals</h4>
-                    <ul id="vitalsEntries"></ul>
-                </div>
-                <div id="intakeQuadrant">
-                    <h4>Intake</h4>
-                    <ul id="intakeEntries"></ul>
-                </div>
-                <div id="activityQuadrant">
-                    <h4>Activity</h4>
-                    <ul id="activityEntries"></ul>
-                </div>
-                <div id="moodSupplementsQuadrant">
-                    <h4>Mood & Supplements</h4>
-                    <ul id="moodSupplementsEntries"></ul>
-                </div>
-            </div>
-            <p id="dataStatus"></p>
-            <div id="trendSummary">
-                <h3>Weekly Trends</h3>
-                <canvas id="weightChart" height="100"></canvas>
-                <canvas id="stepsChart" height="100"></canvas>
-                <canvas id="bpChart" height="100"></canvas>
-                <canvas id="hourlyStepsChart" height="100"></canvas>
-                <ul id="exerciseTrends"></ul>
-            </div>
-        </section>
-        <section id="loggingControls">
-            <h2>Log Your Day</h2>
-            <div id="morningRoutine">
-                <h3>Morning Routine</h3>
-                <div id="supplements">
-                    <h4>Supplements & Medications</h4>
-                    <div id="supplementListContainer">
-                        <ul id="supplementList"></ul>
-                    </div>
-                    <div id="supplementControls">
-                        <input type="text" id="newSupplementInput" placeholder="Add supplement/med">
-                        <button id="addSupplement">Add</button>
-                        <button id="logAllSupplements">Log All</button>
-                    </div>
-                </div>
-                <div id="water">
-                    <h4>Water Intake</h4>
-                    <progress id="waterProgress" value="0" max="64"></progress>
-                    <p>Goal: 64 oz</p>
-                    <div class="control-row">
-                        <button class="waterBtn" data-oz="8">+8 oz</button>
-                        <button class="waterBtn" data-oz="16">+16 oz</button>
-                    </div>
-                </div>
-                <div id="weight">
-                    <h4>Weight</h4>
-                    <div class="control-row">
-                        <input type="number" id="weightInput" placeholder="Enter weight (lbs)">
-                        <button id="logWeight">Log Weight</button>
-                    </div>
-                </div>
-            </div>
-            <div id="logNewData">
-                <h3>Log New Data</h3>
-                <div id="steps">
-                    <h4>Steps</h4>
-                    <progress id="stepProgress" value="0" max="10000"></progress>
-                    <p>Goal: 10000 steps</p>
-                    <div class="control-row">
-                        <input type="number" id="stepInput" placeholder="Enter steps">
-                        <button id="logSteps">Log Steps</button>
-                    </div>
-                </div>
-                <div id="bloodPressure">
-                    <h4>Blood Pressure</h4>
-                    <div class="control-row">
-                        <input type="number" id="systolicInput" placeholder="Systolic (mmHg)">
-                        <input type="number" id="diastolicInput" placeholder="Diastolic (mmHg)">
-                        <button id="logBloodPressure">Log BP</button>
-                    </div>
-                </div>
-                <div id="food">
-                    <h4>Food</h4>
-                    <div class="control-row">
-                        <input type="text" id="foodInput" placeholder="Enter food (e.g., Oatmeal)">
-                        <button id="logFood">Log Food</button>
-                    </div>
-                </div>
-                <div id="exercise">
-                    <h4>Exercise</h4>
-                    <div class="control-row">
-                        <input type="text" id="exerciseInput" placeholder="Enter exercise (e.g., Run)">
-                        <button id="logExercise">Log Exercise</button>
-                    </div>
-                </div>
-                <div id="mood">
-                    <h4>Mood</h4>
-                    <div class="control-row">
-                        <select id="moodSelect">
-                            <option value="Happy">Happy</option>
-                            <option value="Sad">Sad</option>
-                            <option value="Anxious">Anxious</option>
-                            <option value="Calm">Calm</option>
-                            <option value="Custom">Custom</option>
-                        </select>
-                        <input type="text" id="customMoodInput" placeholder="Enter custom mood" style="display: none;">
-                        <button id="logMood">Log Mood</button>
-                    </div>
-                </div>
-                <div id="symptoms">
-                    <h4>Symptoms</h4>
-                    <div class="control-row">
-                        <input type="text" id="symptomInput" placeholder="Enter symptom (e.g., Headache)">
-                        <button id="logSymptom">Log Symptom</button>
-                    </div>
-                </div>
-            </div>
-        </section>
-        <section id="testingControls">
-            <h2>Testing Controls</h2>
-            <div class="control-row">
-                <button id="loadSampleDataBtn">Load 5-Day Sample Data</button>
-                <button id="resetDataBtn">Reset Data</button>
-                <button id="saveDataBtn">Save Data</button>
-                <input type="file" id="loadDataInput" accept=".json" style="display: none;">
-                <button id="loadDataBtn">Load Data</button>
-            </div>
-        </section>
-    </main>
+    <div class="container">
+        <h1 id="currentDate"></h1>
+        <div class="section">
+            <input id="newSupplementInput" placeholder="New Supplement">
+            <button id="addSupplement">Add</button>
+            <div id="supplementList"></div>
+            <button id="logAllSupplements">Log Selected</button>
+        </div>
+        <div class="section">
+            <button class="waterBtn" data-oz="8">8 oz</button>
+            <button class="waterBtn" data-oz="16">16 oz</button>
+            <progress id="waterProgress" max="64" value="0"></progress>
+        </div>
+        <div class="section">
+            <input id="weightInput" type="number" placeholder="Weight (lbs)">
+            <button id="logWeight">Log Weight</button>
+            <input id="stepInput" type="number" placeholder="Steps">
+            <button id="logSteps">Log Steps</button>
+            <progress id="stepProgress" max="10000" value="0"></progress>
+        </div>
+        <div class="section">
+            <input id="systolicInput" type="number" placeholder="Systolic">
+            <input id="diastolicInput" type="number" placeholder="Diastolic">
+            <button id="logBloodPressure">Log BP</button>
+        </div>
+        <div class="section">
+            <input id="foodInput" placeholder="Food">
+            <button id="logFood">Log Food</button>
+            <input id="exerciseInput" placeholder="Exercise">
+            <button id="logExercise">Log Exercise</button>
+        </div>
+        <div class="section">
+            <select id="moodSelect">
+                <option value="Happy">Happy</option>
+                <option value="Sad">Sad</option>
+                <option value="Calm">Calm</option>
+                <option value="Anxious">Anxious</option>
+                <option value="Custom">Custom</option>
+            </select>
+            <input id="customMoodInput" placeholder="Custom Mood" style="display: none;">
+            <button id="logMood">Log Mood</button>
+            <input id="symptomInput" placeholder="Symptom">
+            <button id="logSymptom">Log Symptom</button>
+        </div>
+        <div class="section">
+            <button id="loadSampleDataBtn">Load 5-Day Sample Data</button>
+            <button id="resetDataBtn">Reset Data</button>
+            <button id="saveDataBtn">Save Data to File</button>
+            <button id="loadDataBtn">Load Data from File</button>
+            <input type="file" id="loadDataInput" style="display: none;">
+        </div>
+        <div class="section" id="log"></div>
+        <div class="section">
+            <canvas id="stepsChart"></canvas>
+            <canvas id="hourlyStepsChart"></canvas>
+            <canvas id="weightChart"></canvas>
+            <canvas id="bloodPressureChart"></canvas>
+        </div>
+    </div>
+    <footer>HealthSync v1.3.4 © Copyright 2025 Optcl.ai</footer>
     <script src="data.js"></script>
     <script src="ui.js"></script>
     <script src="events.js"></script>
