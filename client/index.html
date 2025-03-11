@@ -16,7 +16,7 @@
             background: linear-gradient(135deg, #1e3c72, #2a5298);
             color: #fff;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
             min-height: 100vh;
         }
@@ -26,6 +26,7 @@
             padding: 20px;
             border-radius: 15px;
             box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            color: #333; /* Darker text for container */
         }
         h1 { text-align: center; font-size: 2.5em; margin-bottom: 20px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
         .section { margin-bottom: 30px; }
@@ -37,19 +38,23 @@
             border-radius: 25px;
             cursor: pointer;
             transition: transform 0.2s, background 0.3s;
+            margin-bottom: 10px; /* Space below buttons */
         }
         button:hover { transform: scale(1.05); background: #ff8787; }
-        input, select { padding: 8px; border-radius: 5px; border: 1px solid #ccc; }
-        progress { width: 100%; height: 20px; border-radius: 10px; }
+        input, select { padding: 8px; border-radius: 5px; border: 1px solid #ccc; margin-bottom: 10px; }
+        progress { width: 100%; height: 20px; border-radius: 10px; margin-bottom: 10px; }
         canvas { background: #fff; border-radius: 10px; padding: 10px; }
         #log { background: #f0f0f0; padding: 10px; border-radius: 5px; }
-        #log li { color: #333; } /* Darker text for visibility */
+        #log li { color: #1e3c72; } /* Match body gradient for visibility */
         footer {
             text-align: center;
             margin-top: 20px;
             font-size: 0.9em;
             color: #ddd;
             text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+            width: 100%;
+            position: relative;
+            bottom: 0;
         }
     </style>
 </head>
@@ -63,6 +68,7 @@
             <button id="logAllSupplements">Log Selected</button>
         </div>
         <div class="section">
+            <label for="waterProgress">Water Intake:</label>
             <button class="waterBtn" data-oz="8">8 oz</button>
             <button class="waterBtn" data-oz="16">16 oz</button>
             <progress id="waterProgress" max="64" value="0"></progress>
@@ -113,7 +119,7 @@
             <canvas id="bloodPressureChart"></canvas>
         </div>
     </div>
-    <footer>HealthSync v1.3.5 © Copyright 2025 Optcl.ai</footer>
+    <footer>HealthSync v1.3.7 © Copyright 2025 Optcl.ai</footer>
     <script src="data.js"></script>
     <script src="ui.js"></script>
     <script src="events.js"></script>
