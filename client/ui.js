@@ -1,4 +1,4 @@
-// HealthSync Version 1.3.5 - UI Rendering with Null Checks
+// HealthSync Version 1.3.6 - UI Rendering with Safe Chart Cleanup
 function estimateCalories(food) {
     const calorieMap = { "Oatmeal": 150, "Mixed Fruit": 180, "Coffee": 5 };
     return calorieMap[food] || 100;
@@ -32,10 +32,11 @@ function renderTrends() {
     const weightCtx = document.getElementById('weightChart').getContext('2d');
     const bpCtx = document.getElementById('bloodPressureChart').getContext('2d');
 
-    if (window.stepsChart) window.stepsChart.destroy();
-    if (window.hourlyStepsChart) window.hourlyStepsChart.destroy();
-    if (window.weightChart) window.weightChart.destroy();
-    if (window.bloodPressureChart) window.bloodPressureChart.destroy();
+    // Safely destroy charts if they exist
+    if (window.stepsChart && typeof window.stepsChart.destroy === 'function') window.stepsChart.destroy();
+    if (window.hourlyStepsChart && typeof window.hourlyStepsChart.destroy === 'function') window.hourlyStepsChart.destroy();
+    if (window.weightChart && typeof window.weightChart.destroy === 'function') window.weightChart.destroy();
+    if (window.bloodPressureChart && typeof window.bloodPressureChart.destroy === 'function') window.bloodPressureChart.destroy();
 
     const vitalsEntries = Object.entries(userDailyData || {});
     if (!vitalsEntries.length) {
