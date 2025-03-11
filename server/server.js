@@ -1,4 +1,4 @@
-// HealthSync Version 1.2.4 - Backend with HTTP and JSON Persistence
+// HealthSync Version 1.2.5 - Backend with HTTP and Robust JSON Persistence
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const cors = require('cors');
@@ -25,16 +25,24 @@ async function loadData() {
         userDailyData = parsed.userDailyData || {};
         supplements = parsed.supplements || [];
         foods = parsed.foods || [];
-        console.log('Loaded data from file:', { userDailyData, supplements, foods });
+        console.log('Successfully loaded data from file:', { userDailyData, supplements, foods });
     } catch (err) {
-        console.log('No data file found, starting fresh:', err.message);
+        console.error('Failed to load data from file:', err.message);
+        console.log('Starting with empty data set');
+        userDailyData = {};
+        supplements = [];
+        foods = [];
     }
 }
 
 async function saveData() {
     const data = { userDailyData, supplements, foods };
-    await fs.writeFile(DATA_FILE, JSON.stringify(data, null, 2), 'utf8');
-    console.log('Saved data to file:', data);
+    try {
+        await fs.writeFile(DATA_FILE, JSON.stringify(data, null, 2), 'utf8');
+        console.log('Successfully saved data to file:', data);
+    } catch (err) {
+        console.error('Failed to save data to file:', err.message);
+    }
 }
 
 app.use((req, res, next) => {
@@ -90,6 +98,19 @@ app.post('/api/data', authenticateToken, async (req, res) => {
 app.get('/', (req, res) => {
     console.log('Serving index.html');
     res.sendFile(path.join(__dirname, '../client/index.html'));
+});
+
+// Save data on process termination
+process.on('SIGTERM', async () => {
+    console.log('Received SIGTERM, saving data before exit...');
+    await saveData();
+    process.exit(0);
+});
+
+process.on('SIGINT', async () => {
+    console.log('Received SIGINT, saving data before exit...');
+    await saveData();
+    process.exit(0);
 });
 
 // Load data on startup
