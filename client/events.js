@@ -1,4 +1,4 @@
-// HealthSync Version 1.2.2 - Event Listeners
+// HealthSync Version 1.2.6 - Event Listeners
 document.addEventListener('DOMContentLoaded', async () => {
     console.log('events.js loaded, starting login...');
     await login(); // Initial login
@@ -235,10 +235,21 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     resetDataBtn.addEventListener('click', async () => {
         console.log('Resetting data...');
-        userDailyData = {};
+        userDailyData = { [today]: { 
+            steps: 0, 
+            water: 0, 
+            weight: null, 
+            bloodPressure: null, 
+            log: [], 
+            exercises: [], 
+            stepsLog: [], 
+            moods: [], 
+            symptoms: [] 
+        }};
         supplements = [];
         foods = [];
         await saveData();
+        console.log('Data reset and saved, reloading page...');
         location.reload();
     });
 
