@@ -1,5 +1,8 @@
-// HealthSync Version 1.1.017 - Event Listeners
-document.addEventListener('DOMContentLoaded', () => {
+// HealthSync Version 1.2.6 - Event Listeners
+document.addEventListener('DOMContentLoaded', async () => {
+    console.log('events.js loaded, starting login...');
+    await login(); // Initial login
+
     const addSupplementBtn = document.getElementById('addSupplement');
     const logAllSupplementsBtn = document.getElementById('logAllSupplements');
     const waterBtns = document.querySelectorAll('.waterBtn');
@@ -15,57 +18,56 @@ document.addEventListener('DOMContentLoaded', () => {
     const saveDataBtn = document.getElementById('saveDataBtn');
     const loadDataBtn = document.getElementById('loadDataBtn');
 
-    // Autocomplete for supplements
     $("#newSupplementInput").autocomplete({
-        source: supplements,
+        source: () => supplements,
         minLength: 1
     });
 
-    addSupplementBtn.addEventListener('click', () => {
+    addSupplementBtn.addEventListener('click', async () => {
         const newSup = document.getElementById('newSupplementInput').value.trim();
         if (newSup && !supplements.includes(newSup)) {
             supplements.push(newSup);
-            saveData();
+            await saveData();
             renderSupplements();
             document.getElementById('newSupplementInput').value = '';
         }
     });
 
-    logAllSupplementsBtn.addEventListener('click', () => {
+    logAllSupplementsBtn.addEventListener('click', async () => {
         const checked = document.querySelectorAll('#supplementList input:checked');
         if (checked.length > 0) {
             checked.forEach(input => {
                 const supName = input.nextElementSibling.textContent;
                 userDailyData[today].log.push(`${supName} logged`);
             });
-            saveData();
+            await saveData();
             renderLog();
         }
     });
 
     waterBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
+        btn.addEventListener('click', async () => {
             const oz = parseInt(btn.dataset.oz);
             userDailyData[today].water += oz;
             document.getElementById('waterProgress').value = userDailyData[today].water;
-            saveData();
+            await saveData();
             renderLog();
         });
     });
 
-    logWeightBtn.addEventListener('click', () => {
+    logWeightBtn.addEventListener('click', async () => {
         const weight = document.getElementById('weightInput').value;
         if (weight) {
             userDailyData[today].weight = weight;
             userDailyData[today].log.push(`Weight: ${weight} lbs`);
-            saveData();
+            await saveData();
             renderLog();
             renderTrends();
             document.getElementById('weightInput').value = '';
         }
     });
 
-    logStepsBtn.addEventListener('click', () => {
+    logStepsBtn.addEventListener('click', async () => {
         const steps = parseInt(document.getElementById('stepInput').value);
         if (steps && steps > 0) {
             userDailyData[today].steps += steps;
@@ -73,20 +75,20 @@ document.addEventListener('DOMContentLoaded', () => {
             userDailyData[today].log = userDailyData[today].log.filter(e => !e.startsWith('Steps:'));
             userDailyData[today].log.push(`Steps: ${userDailyData[today].steps} / 10000`);
             document.getElementById('stepProgress').value = userDailyData[today].steps;
-            saveData();
+            await saveData();
             renderLog();
             renderTrends();
             document.getElementById('stepInput').value = '';
         }
     });
 
-    logBloodPressureBtn.addEventListener('click', () => {
+    logBloodPressureBtn.addEventListener('click', async () => {
         const systolic = document.getElementById('systolicInput').value;
         const diastolic = document.getElementById('diastolicInput').value;
         if (systolic && diastolic) {
             userDailyData[today].bloodPressure = { systolic, diastolic };
             userDailyData[today].log.push(`Blood Pressure: ${systolic}/${diastolic} mmHg`);
-            saveData();
+            await saveData();
             renderLog();
             renderTrends();
             document.getElementById('systolicInput').value = '';
@@ -94,23 +96,23 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    logFoodBtn.addEventListener('click', () => {
+    logFoodBtn.addEventListener('click', async () => {
         const food = document.getElementById('foodInput').value;
         if (food) {
             if (!foods.includes(food)) foods.push(food);
             userDailyData[today].log.push(`Meal logged: ${food}, ~${estimateCalories(food)} kcal`);
-            saveData();
+            await saveData();
             renderLog();
             document.getElementById('foodInput').value = '';
         }
     });
 
-    logExerciseBtn.addEventListener('click', () => {
+    logExerciseBtn.addEventListener('click', async () => {
         const exercise = document.getElementById('exerciseInput').value;
         if (exercise) {
             userDailyData[today].log.push(`Exercise logged: ${exercise}`);
             userDailyData[today].exercises.push(exercise);
-            saveData();
+            await saveData();
             renderLog();
             renderTrends();
             document.getElementById('exerciseInput').value = '';
@@ -122,7 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('moodSelect').value === 'Custom' ? 'inline-block' : 'none';
     });
 
-    logMoodBtn.addEventListener('click', () => {
+    logMoodBtn.addEventListener('click', async () => {
         let mood = document.getElementById('moodSelect').value;
         if (mood === 'Custom') {
             mood = document.getElementById('customMoodInput').value.trim();
@@ -130,25 +132,30 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         userDailyData[today].moods.push({ mood, time: new Date().toISOString() });
         userDailyData[today].log.push(`Mood: ${mood}`);
-        saveData();
+        await saveData();
         renderLog();
         document.getElementById('customMoodInput').value = '';
         document.getElementById('customMoodInput').style.display = 'none';
         document.getElementById('moodSelect').value = 'Happy';
     });
 
-    logSymptomBtn.addEventListener('click', () => {
+    logSymptomBtn.addEventListener('click', async () => {
         const symptom = document.getElementById('symptomInput').value.trim();
         if (symptom) {
             userDailyData[today].symptoms.push({ symptom, time: new Date().toISOString() });
             userDailyData[today].log.push(`Symptom: ${symptom}`);
-            saveData();
+            await saveData();
             renderLog();
             document.getElementById('symptomInput').value = '';
         }
     });
 
-    loadSampleDataBtn.addEventListener('click', () => {
+    loadSampleDataBtn.addEventListener('click', async () => {
+        console.log('Button clicked! Loading sample data...');
+        if (!token) {
+            console.log('No token, logging in...');
+            await login();
+        }
         const sampleData = {
             "2025-03-05": {
                 steps: 7000,
@@ -204,23 +211,50 @@ document.addEventListener('DOMContentLoaded', () => {
                 stepsLog: [{ steps: 2000, time: "2025-03-09T08:00:00" }, { steps: 3000, time: "2025-03-09T14:00:00" }],
                 moods: [{ mood: "Anxious", time: "2025-03-09T14:00:00" }],
                 symptoms: []
+            },
+            [today]: { 
+                steps: 0, 
+                water: 0, 
+                weight: null, 
+                bloodPressure: null, 
+                log: [], 
+                exercises: [], 
+                stepsLog: [], 
+                moods: [], 
+                symptoms: [] 
             }
         };
         Object.assign(userDailyData, sampleData);
-        const sampleSupplements = ["Vitamin D, 2000 IU", "Losartan, 50 mg"];
-        const sampleFoods = ["Oatmeal", "Mixed Fruit", "Coffee"];
-        supplements = sampleSupplements;
-        foods = sampleFoods;
-        saveData();
+        console.log('Sample data loaded:', JSON.stringify(userDailyData, null, 2));
+        supplements = ["Vitamin D, 2000 IU", "Losartan, 50 mg"];
+        foods = ["Oatmeal", "Mixed Fruit", "Coffee"];
+        await saveData();
+        console.log('Reloading page...');
         location.reload();
     });
 
-    resetDataBtn.addEventListener('click', () => {
-        localStorage.clear();
+    resetDataBtn.addEventListener('click', async () => {
+        console.log('Resetting data...');
+        userDailyData = { [today]: { 
+            steps: 0, 
+            water: 0, 
+            weight: null, 
+            bloodPressure: null, 
+            log: [], 
+            exercises: [], 
+            stepsLog: [], 
+            moods: [], 
+            symptoms: [] 
+        }};
+        supplements = [];
+        foods = [];
+        await saveData();
+        console.log('Data reset and saved, reloading page...');
         location.reload();
     });
 
     saveDataBtn.addEventListener('click', () => {
+        console.log('Saving data to file...');
         const dataStr = JSON.stringify(userDailyData);
         const blob = new Blob([dataStr], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
@@ -232,16 +266,18 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     loadDataBtn.addEventListener('click', () => {
+        console.log('Triggering file load...');
         document.getElementById('loadDataInput').click();
     });
 
-    document.getElementById('loadDataInput').addEventListener('change', (event) => {
+    document.getElementById('loadDataInput').addEventListener('change', async (event) => {
         const file = event.target.files[0];
         if (file) {
+            console.log('Loading data from file:', file.name);
             const reader = new FileReader();
-            reader.onload = (e) => {
+            reader.onload = async (e) => {
                 userDailyData = JSON.parse(e.target.result);
-                saveData();
+                await saveData();
                 location.reload();
             };
             reader.readAsText(file);

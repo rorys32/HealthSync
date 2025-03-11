@@ -1,5 +1,6 @@
 prompt.txt
 node_modules/
 package-lock.json
-server/
-
+server/cert.pem
+server/key.pem
+webhook.js
