@@ -1,140 +1,90 @@
-// HealthSync Version 1.2.2 - UI Rendering
-let charts = {}; // Store chart instances for cleanup
-
-function renderLog() {
-    console.log('Rendering log...');
-    const vitalsEntries = document.getElementById('vitalsEntries');
-    const intakeEntries = document.getElementById('intakeEntries');
-    const activityEntries = document.getElementById('activityEntries');
-    const moodSupplementsEntries = document.getElementById('moodSupplementsEntries');
-    const dataStatus = document.getElementById('dataStatus');
-
-    vitalsEntries.innerHTML = '';
-    intakeEntries.innerHTML = '';
-    activityEntries.innerHTML = '';
-    moodSupplementsEntries.innerHTML = '';
-
-    const waterEntry = document.createElement('li');
-    waterEntry.textContent = `Water: ${userDailyData[today].water} oz / 64 oz`;
-    intakeEntries.appendChild(waterEntry);
-
-    userDailyData[today].log.forEach(entry => {
-        const li = document.createElement('li');
-        li.textContent = entry;
-        if (entry.startsWith('Weight:') || entry.startsWith('Blood Pressure:')) {
-            vitalsEntries.appendChild(li);
-        } else if (entry.startsWith('Meal logged:')) {
-            intakeEntries.appendChild(li);
-        } else if (entry.startsWith('Steps:') || entry.startsWith('Exercise logged:')) {
-            activityEntries.appendChild(li);
-        } else if (entry.startsWith('Mood:') || entry.startsWith('Symptom:') || entry.includes('logged') && !entry.startsWith('Meal logged:')) {
-            moodSupplementsEntries.appendChild(li);
-        }
-    });
-
-    dataStatus.textContent = `Your data is saved for ${today}`;
+// HealthSync Version 1.3.5 - UI Rendering with Null Checks
+function estimateCalories(food) {
+    const calorieMap = { "Oatmeal": 150, "Mixed Fruit": 180, "Coffee": 5 };
+    return calorieMap[food] || 100;
 }
 
 function renderSupplements() {
-    console.log('Rendering supplements...');
     const supplementList = document.getElementById('supplementList');
     supplementList.innerHTML = '';
-    supplements.forEach((sup, index) => {
-        const li = document.createElement('li');
-        li.innerHTML = `<input type="checkbox" id="sup${index}"><label for="sup${index}">${sup}</label>`;
-        supplementList.appendChild(li);
+    supplements.forEach(sup => {
+        const div = document.createElement('div');
+        div.innerHTML = `<input type="checkbox" id="${sup}"><label for="${sup}">${sup}</label>`;
+        supplementList.appendChild(div);
     });
 }
 
+function renderLog() {
+    const logDiv = document.getElementById('log');
+    logDiv.innerHTML = '<h2>Daily Log</h2>';
+    const ul = document.createElement('ul');
+    userDailyData[today].log.forEach(entry => {
+        const li = document.createElement('li');
+        li.textContent = entry;
+        ul.appendChild(li);
+    });
+    logDiv.appendChild(ul);
+}
+
 function renderTrends() {
-    console.log('Rendering trends...');
-    const dates = Object.keys(userDailyData).sort();
-    const weights = dates.map(date => userDailyData[date].weight || null);
-    const steps = dates.map(date => userDailyData[date].steps || 0);
-    const systolic = dates.map(date => userDailyData[date].bloodPressure ? userDailyData[date].bloodPressure.systolic : null);
-    const diastolic = dates.map(date => userDailyData[date].bloodPressure ? userDailyData[date].bloodPressure.diastolic : null);
+    const stepsCtx = document.getElementById('stepsChart').getContext('2d');
+    const hourlyStepsCtx = document.getElementById('hourlyStepsChart').getContext('2d');
+    const weightCtx = document.getElementById('weightChart').getContext('2d');
+    const bpCtx = document.getElementById('bloodPressureChart').getContext('2d');
 
-    console.log('Trend data:', { dates, weights, steps, systolic, diastolic });
+    if (window.stepsChart) window.stepsChart.destroy();
+    if (window.hourlyStepsChart) window.hourlyStepsChart.destroy();
+    if (window.weightChart) window.weightChart.destroy();
+    if (window.bloodPressureChart) window.bloodPressureChart.destroy();
 
-    // Destroy existing charts
-    ['weightChart', 'stepsChart', 'bpChart', 'hourlyStepsChart'].forEach(id => {
-        if (charts[id]) {
-            charts[id].destroy();
-            console.log(`Destroyed chart: ${id}`);
-        }
-    });
+    const vitalsEntries = Object.entries(userDailyData || {});
+    if (!vitalsEntries.length) {
+        console.log('No vital entries to render');
+        return;
+    }
 
-    charts['weightChart'] = new Chart(document.getElementById('weightChart'), {
+    const dates = vitalsEntries.map(([date]) => date);
+    const stepsData = vitalsEntries.map(([, data]) => data.steps || 0);
+    const weightData = vitalsEntries.map(([, data]) => data.weight || null);
+    const systolicData = vitalsEntries.map(([, data]) => data.bloodPressure?.systolic || null);
+    const diastolicData = vitalsEntries.map(([, data]) => data.bloodPressure?.diastolic || null);
+
+    window.stepsChart = new Chart(stepsCtx, {
         type: 'line',
-        data: {
-            labels: dates,
-            datasets: [{
-                label: 'Weight (lbs)',
-                data: weights,
-                borderColor: '#4a90e2',
-                fill: false
-            }]
-        },
-        options: { scales: { y: { beginAtZero: false } } }
-    });
-
-    charts['stepsChart'] = new Chart(document.getElementById('stepsChart'), {
-        type: 'bar',
-        data: {
-            labels: dates,
-            datasets: [{
-                label: 'Steps',
-                data: steps,
-                backgroundColor: '#2ecc71'
-            }]
-        },
+        data: { labels: dates, datasets: [{ label: 'Steps', data: stepsData, borderColor: 'blue', fill: false }] },
         options: { scales: { y: { beginAtZero: true } } }
     });
 
-    charts['bpChart'] = new Chart(document.getElementById('bpChart'), {
+    const hourlySteps = Array(24).fill(0);
+    vitalsEntries.forEach(([, data]) => {
+        if (data.stepsLog) {
+            data.stepsLog.forEach(({ steps, time }) => {
+                const hour = new Date(time).getHours();
+                hourlySteps[hour] += steps;
+            });
+        }
+    });
+    window.hourlyStepsChart = new Chart(hourlyStepsCtx, {
+        type: 'bar',
+        data: { labels: Array.from({ length: 24 }, (_, i) => `${i}:00`), datasets: [{ label: 'Hourly Steps', data: hourlySteps, backgroundColor: 'blue' }] },
+        options: { scales: { y: { beginAtZero: true } } }
+    });
+
+    window.weightChart = new Chart(weightCtx, {
+        type: 'line',
+        data: { labels: dates, datasets: [{ label: 'Weight', data: weightData, borderColor: 'green', fill: false }] },
+        options: { scales: { y: { beginAtZero: false } } }
+    });
+
+    window.bloodPressureChart = new Chart(bpCtx, {
         type: 'line',
         data: {
             labels: dates,
             datasets: [
-                { label: 'Systolic (mmHg)', data: systolic, borderColor: '#e74c3c', fill: false },
-                { label: 'Diastolic (mmHg)', data: diastolic, borderColor: '#f39c12', fill: false }
+                { label: 'Systolic BP', data: systolicData, borderColor: 'red', fill: false },
+                { label: 'Diastolic BP', data: diastolicData, borderColor: 'orange', fill: false }
             ]
         },
         options: { scales: { y: { beginAtZero: false } } }
     });
-
-    const hourlySteps = {};
-    userDailyData[today].stepsLog.forEach(log => {
-        const hour = new Date(log.time).getHours().toString().padStart(2, '0') + ':00';
-        hourlySteps[hour] = (hourlySteps[hour] || 0) + log.steps;
-    });
-    const hours = Object.keys(hourlySteps).sort();
-    const stepsPerHour = hours.map(hour => hourlySteps[hour]);
-
-    charts['hourlyStepsChart'] = new Chart(document.getElementById('hourlyStepsChart'), {
-        type: 'bar',
-        data: {
-            labels: hours,
-            datasets: [{
-                label: 'Steps Per Hour',
-                data: stepsPerHour,
-                backgroundColor: '#9b59b6'
-            }]
-        },
-        options: { scales: { y: { beginAtZero: true } } }
-    });
-
-    const exerciseCount = {};
-    Object.keys(userDailyData).forEach(date => {
-        userDailyData[date].exercises.forEach(ex => {
-            exerciseCount[ex] = (exerciseCount[ex] || 0) + 1;
-        });
-    });
-    const exerciseTrends = document.getElementById('exerciseTrends');
-    exerciseTrends.innerHTML = '';
-    for (const [ex, count] of Object.entries(exerciseCount)) {
-        const li = document.createElement('li');
-        li.textContent = `${ex}: ${count} time${count > 1 ? 's' : ''} this week`;
-        exerciseTrends.appendChild(li);
-    }
 }

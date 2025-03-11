@@ -1,4 +1,4 @@
-// HealthSync Version 1.3.3 - Backend with HTTP, MongoDB Persistence, and Startup Check
+// HealthSync Version 1.3.5 - Backend with HTTP, MongoDB Persistence, and Debug
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const cors = require('cors');
