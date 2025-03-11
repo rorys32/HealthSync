@@ -1,12 +1,14 @@
-// HealthSync Version 1.2.2 - Backend with HTTP (Temporary)
+// HealthSync Version 1.2.4 - Backend with HTTP and JSON Persistence
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const cors = require('cors');
 const path = require('path');
+const fs = require('fs').promises;
 
 const app = express();
 const PORT = 3000;
 const SECRET_KEY = 'your-secret-key';
+const DATA_FILE = path.join(__dirname, 'data.json');
 
 app.use(cors({ origin: '*', methods: ['GET', 'POST'] }));
 app.use(express.json());
@@ -15,6 +17,25 @@ app.use(express.static(path.join(__dirname, '../client'), { etag: false }));
 let userDailyData = {};
 let supplements = [];
 let foods = [];
+
+async function loadData() {
+    try {
+        const data = await fs.readFile(DATA_FILE, 'utf8');
+        const parsed = JSON.parse(data);
+        userDailyData = parsed.userDailyData || {};
+        supplements = parsed.supplements || [];
+        foods = parsed.foods || [];
+        console.log('Loaded data from file:', { userDailyData, supplements, foods });
+    } catch (err) {
+        console.log('No data file found, starting fresh:', err.message);
+    }
+}
+
+async function saveData() {
+    const data = { userDailyData, supplements, foods };
+    await fs.writeFile(DATA_FILE, JSON.stringify(data, null, 2), 'utf8');
+    console.log('Saved data to file:', data);
+}
 
 app.use((req, res, next) => {
     console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
@@ -50,18 +71,19 @@ app.post('/api/login', (req, res) => {
     res.json({ token });
 });
 
-app.get('/api/data', authenticateToken, (req, res) => {
+app.get('/api/data', authenticateToken, async (req, res) => {
     console.log('Sending data:', { userDailyData, supplements, foods });
     res.json({ userDailyData, supplements, foods });
 });
 
-app.post('/api/data', authenticateToken, (req, res) => {
+app.post('/api/data', authenticateToken, async (req, res) => {
     const { userDailyData: newData, supplements: newSupps, foods: newFoods } = req.body;
     console.log('Received data:', req.body);
     userDailyData = { ...userDailyData, ...newData };
     supplements = newSupps || supplements;
     foods = newFoods || foods;
     console.log('Updated server data:', { userDailyData, supplements, foods });
+    await saveData();
     res.sendStatus(200);
 });
 
@@ -70,8 +92,13 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '../client/index.html'));
 });
 
-app.listen(PORT, '0.0.0.0', () => {
-    console.log(`HTTP server running on http://0.0.0.0:${PORT}`);
-    console.log(`Local access: http://localhost:${PORT}`);
-    console.log(`External access: http://your-public-ip:23748`);
+// Load data on startup
+loadData().then(() => {
+    app.listen(PORT, '0.0.0.0', () => {
+        console.log(`HTTP server running on http://0.0.0.0:${PORT}`);
+        console.log(`Local access: http://localhost:${PORT}`);
+        console.log(`External access: http://your-public-ip:23748`);
+    });
+}).catch(err => {
+    console.error('Failed to start server:', err);
 });
