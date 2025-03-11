@@ -1,34 +1,17 @@
-# HealthSync Version 1.2.000
+# HealthSync
 
-A health tracking app with a Node.js backend.
+A health tracking application to log daily metrics like steps, water intake, and more, with data visualization via charts. Now with MongoDB persistence starting at version 1.3.0.
 
-## Setup
-1. Install dependencies: `npm install`
-2. Start the server: `npm start` or `npm run dev` (with nodemon)
-3. Open `http://localhost:3000` in your browser.
+## Setup Instructions
 
-## Features
-- Tracks daily health data (steps, water, weight, etc.) with a Node.js/Express backend.
-- JWT authentication (dummy login for now).
-- Data persists in memory (future: database).
-- Responsive UI from 1.1.017.
+### Prerequisites
+- **Node.js**: Version 14.x or higher (check with `node --version`).
+- **npm**: Comes with Node.js (check with `npm --version`).
+- **MongoDB**: Version 8.0.5 installed (check with `mongod --version`).
 
-## Directory Structure
-- `client/`: Frontend files (HTML, CSS, JS).
-- `server/`: Backend Node.js server.
-
-
-healthsync/
-├── client/
-│   ├── index.html
-│   ├── styles.css
-│   ├── data.js
-│   ├── ui.js
-│   ├── events.js
-│   └── script.js
-├── server/
-│   └── server.js
-├── package.json
-└── README.md
-
-So no to Whoppi Goldberg
+### MongoDB Environment Setup (macOS)
+1. **Install MongoDB** (if not already done):
+   - Using Homebrew:
+     ```bash
+     brew tap mongodb/brew
+     brew install mongodb-community@8.0

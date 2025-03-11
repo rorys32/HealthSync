@@ -1,47 +1,58 @@
-// HealthSync Version 1.2.5 - Backend with HTTP and Robust JSON Persistence
+// HealthSync Version 1.3.0 - Backend with HTTP and MongoDB Persistence
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const cors = require('cors');
 const path = require('path');
-const fs = require('fs').promises;
+const { MongoClient } = require('mongodb');
 
 const app = express();
 const PORT = 3000;
 const SECRET_KEY = 'your-secret-key';
-const DATA_FILE = path.join(__dirname, 'data.json');
+const MONGO_URI = 'mongodb://localhost:27017';
+const DB_NAME = 'healthsync';
 
 app.use(cors({ origin: '*', methods: ['GET', 'POST'] }));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '../client'), { etag: false }));
 
-let userDailyData = {};
-let supplements = [];
-let foods = [];
+let client;
+let db;
 
-async function loadData() {
+async function connectMongo() {
     try {
-        const data = await fs.readFile(DATA_FILE, 'utf8');
-        const parsed = JSON.parse(data);
-        userDailyData = parsed.userDailyData || {};
-        supplements = parsed.supplements || [];
-        foods = parsed.foods || [];
-        console.log('Successfully loaded data from file:', { userDailyData, supplements, foods });
+        client = await MongoClient.connect(MONGO_URI, { useUnifiedTopology: true });
+        db = client.db(DB_NAME);
+        console.log('Connected to MongoDB 8.0.5');
     } catch (err) {
-        console.error('Failed to load data from file:', err.message);
-        console.log('Starting with empty data set');
-        userDailyData = {};
-        supplements = [];
-        foods = [];
+        console.error('Failed to connect to MongoDB:', err);
+        process.exit(1);
     }
 }
 
-async function saveData() {
-    const data = { userDailyData, supplements, foods };
+async function loadData() {
     try {
-        await fs.writeFile(DATA_FILE, JSON.stringify(data, null, 2), 'utf8');
-        console.log('Successfully saved data to file:', data);
+        const data = await db.collection('userData').findOne({ id: 'userData' }) || {};
+        return {
+            userDailyData: data.userDailyData || {},
+            supplements: data.supplements || [],
+            foods: data.foods || []
+        };
     } catch (err) {
-        console.error('Failed to save data to file:', err.message);
+        console.error('Failed to load data from MongoDB:', err);
+        return { userDailyData: {}, supplements: [], foods: [] };
+    }
+}
+
+async function saveData(userDailyData, supplements, foods) {
+    try {
+        await db.collection('userData').updateOne(
+            { id: 'userData' },
+            { $set: { userDailyData, supplements, foods } },
+            { upsert: true }
+        );
+        console.log('Successfully saved data to MongoDB:', { userDailyData, supplements, foods });
+    } catch (err) {
+        console.error('Failed to save data to MongoDB:', err);
     }
 }
 
@@ -80,6 +91,7 @@ app.post('/api/login', (req, res) => {
 });
 
 app.get('/api/data', authenticateToken, async (req, res) => {
+    const { userDailyData, supplements, foods } = await loadData();
     console.log('Sending data:', { userDailyData, supplements, foods });
     res.json({ userDailyData, supplements, foods });
 });
@@ -87,11 +99,7 @@ app.get('/api/data', authenticateToken, async (req, res) => {
 app.post('/api/data', authenticateToken, async (req, res) => {
     const { userDailyData: newData, supplements: newSupps, foods: newFoods } = req.body;
     console.log('Received data:', req.body);
-    userDailyData = { ...userDailyData, ...newData };
-    supplements = newSupps || supplements;
-    foods = newFoods || foods;
-    console.log('Updated server data:', { userDailyData, supplements, foods });
-    await saveData();
+    await saveData(newData,NIK newSupps, newFoods);
     res.sendStatus(200);
 });
 
@@ -100,21 +108,21 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '../client/index.html'));
 });
 
-// Save data on process termination
+// Cleanup on exit
 process.on('SIGTERM', async () => {
-    console.log('Received SIGTERM, saving data before exit...');
-    await saveData();
+    console.log('Received SIGTERM, closing MongoDB connection...');
+    if (client) await client.close();
     process.exit(0);
 });
 
 process.on('SIGINT', async () => {
-    console.log('Received SIGINT, saving data before exit...');
-    await saveData();
+    console.log('Received SIGINT, closing MongoDB connection...');
+    if (client) await client.close();
     process.exit(0);
 });
 
-// Load data on startup
-loadData().then(() => {
+// Start server with MongoDB connection
+connectMongo().then(() => {
     app.listen(PORT, '0.0.0.0', () => {
         console.log(`HTTP server running on http://0.0.0.0:${PORT}`);
         console.log(`Local access: http://localhost:${PORT}`);
