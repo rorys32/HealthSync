@@ -26,10 +26,20 @@
             padding: 20px;
             border-radius: 15px;
             box-shadow: 0 8px 16px rgba(0,0,0,0.2);
-            color: #333; /* Darker text for container */
+            color: #333;
         }
         h1 { text-align: center; font-size: 2.5em; margin-bottom: 20px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
         .section { margin-bottom: 30px; }
+        .log-quadrants {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            background: #f0f0f0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .quadrant { padding: 10px; }
+        .quadrant li { color: #1e3c72; }
         button {
             background: #ff6b6b;
             color: white;
@@ -38,14 +48,12 @@
             border-radius: 25px;
             cursor: pointer;
             transition: transform 0.2s, background 0.3s;
-            margin-bottom: 10px; /* Space below buttons */
+            margin-bottom: 10px;
         }
         button:hover { transform: scale(1.05); background: #ff8787; }
         input, select { padding: 8px; border-radius: 5px; border: 1px solid #ccc; margin-bottom: 10px; }
         progress { width: 100%; height: 20px; border-radius: 10px; margin-bottom: 10px; }
         canvas { background: #fff; border-radius: 10px; padding: 10px; }
-        #log { background: #f0f0f0; padding: 10px; border-radius: 5px; }
-        #log li { color: #1e3c72; } /* Match body gradient for visibility */
         footer {
             text-align: center;
             margin-top: 20px;
@@ -62,36 +70,34 @@
     <div class="container">
         <h1 id="currentDate"></h1>
         <div class="section">
-            <input id="newSupplementInput" placeholder="New Supplement">
-            <button id="addSupplement">Add</button>
-            <div id="supplementList"></div>
-            <button id="logAllSupplements">Log Selected</button>
-        </div>
-        <div class="section">
-            <label for="waterProgress">Water Intake:</label>
-            <button class="waterBtn" data-oz="8">8 oz</button>
-            <button class="waterBtn" data-oz="16">16 oz</button>
-            <progress id="waterProgress" max="64" value="0"></progress>
+            <div class="log-quadrants">
+                <div class="quadrant" id="vitalsEntries"><h3>Vitals</h3><ul></ul></div>
+                <div class="quadrant" id="intakeEntries"><h3>Intake</h3><ul></ul></div>
+                <div class="quadrant" id="activityEntries"><h3>Activity</h3><ul></ul></div>
+                <div class="quadrant" id="moodSupplementsEntries"><h3>Mood & Supplements</h3><ul></ul></div>
+            </div>
         </div>
         <div class="section">
             <input id="weightInput" type="number" placeholder="Weight (lbs)">
             <button id="logWeight">Log Weight</button>
+            <input id="newSupplementInput" placeholder="New Supplement">
+            <button id="addSupplement">Add</button>
+            <div id="supplementList"></div>
+            <button id="logAllSupplements">Log Selected</button>
+            <input id="foodInput" placeholder="Food">
+            <button id="logFood">Log Food</button>
+            <label for="waterProgress">Water Intake:</label>
+            <button class="waterBtn" data-oz="8">8 oz</button>
+            <button class="waterBtn" data-oz="16">16 oz</button>
+            <progress id="waterProgress" max="64" value="0"></progress>
             <input id="stepInput" type="number" placeholder="Steps">
             <button id="logSteps">Log Steps</button>
             <progress id="stepProgress" max="10000" value="0"></progress>
-        </div>
-        <div class="section">
             <input id="systolicInput" type="number" placeholder="Systolic">
             <input id="diastolicInput" type="number" placeholder="Diastolic">
             <button id="logBloodPressure">Log BP</button>
-        </div>
-        <div class="section">
-            <input id="foodInput" placeholder="Food">
-            <button id="logFood">Log Food</button>
             <input id="exerciseInput" placeholder="Exercise">
             <button id="logExercise">Log Exercise</button>
-        </div>
-        <div class="section">
             <select id="moodSelect">
                 <option value="Happy">Happy</option>
                 <option value="Sad">Sad</option>
@@ -103,15 +109,12 @@
             <button id="logMood">Log Mood</button>
             <input id="symptomInput" placeholder="Symptom">
             <button id="logSymptom">Log Symptom</button>
-        </div>
-        <div class="section">
             <button id="loadSampleDataBtn">Load 5-Day Sample Data</button>
             <button id="resetDataBtn">Reset Data</button>
             <button id="saveDataBtn">Save Data to File</button>
             <button id="loadDataBtn">Load Data from File</button>
             <input type="file" id="loadDataInput" style="display: none;">
         </div>
-        <div class="section" id="log"></div>
         <div class="section">
             <canvas id="stepsChart"></canvas>
             <canvas id="hourlyStepsChart"></canvas>
@@ -119,7 +122,7 @@
             <canvas id="bloodPressureChart"></canvas>
         </div>
     </div>
-    <footer>HealthSync v1.3.7 © Copyright 2025 Optcl.ai</footer>
+    <footer>HealthSync v1.3.8 © Copyright 2025 Optcl.ai</footer>
     <script src="data.js"></script>
     <script src="ui.js"></script>
     <script src="events.js"></script>

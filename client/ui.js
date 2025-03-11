@@ -1,8 +1,5 @@
-// HealthSync Version 1.3.6 - UI Rendering with Safe Chart Cleanup
-function estimateCalories(food) {
-    const calorieMap = { "Oatmeal": 150, "Mixed Fruit": 180, "Coffee": 5 };
-    return calorieMap[food] || 100;
-}
+// HealthSync Version 1.3.8 - UI Rendering with Quadrants and Safe Chart Cleanup
+let charts = {};
 
 function renderSupplements() {
     const supplementList = document.getElementById('supplementList');
@@ -15,15 +12,33 @@ function renderSupplements() {
 }
 
 function renderLog() {
-    const logDiv = document.getElementById('log');
-    logDiv.innerHTML = '<h2>Daily Log</h2>';
-    const ul = document.createElement('ul');
+    const vitalsEntries = document.getElementById('vitalsEntries').querySelector('ul');
+    const intakeEntries = document.getElementById('intakeEntries').querySelector('ul');
+    const activityEntries = document.getElementById('activityEntries').querySelector('ul');
+    const moodSupplementsEntries = document.getElementById('moodSupplementsEntries').querySelector('ul');
+
+    vitalsEntries.innerHTML = '';
+    intakeEntries.innerHTML = '';
+    activityEntries.innerHTML = '';
+    moodSupplementsEntries.innerHTML = '';
+
+    const waterEntry = document.createElement('li');
+    waterEntry.textContent = `Water: ${userDailyData[today].water} oz / 64 oz`;
+    intakeEntries.appendChild(waterEntry);
+
     userDailyData[today].log.forEach(entry => {
         const li = document.createElement('li');
         li.textContent = entry;
-        ul.appendChild(li);
+        if (entry.startsWith('Weight:') || entry.startsWith('Blood Pressure:')) {
+            vitalsEntries.appendChild(li);
+        } else if (entry.startsWith('Meal:')) {
+            intakeEntries.appendChild(li);
+        } else if (entry.startsWith('Steps:') || entry.startsWith('Exercise:')) {
+            activityEntries.appendChild(li);
+        } else if (entry.startsWith('Mood:') || entry.startsWith('Symptom:') || (!entry.startsWith('Water:') && !entry.startsWith('Meal:'))) {
+            moodSupplementsEntries.appendChild(li);
+        }
     });
-    logDiv.appendChild(ul);
 }
 
 function renderTrends() {
@@ -33,10 +48,10 @@ function renderTrends() {
     const bpCtx = document.getElementById('bloodPressureChart').getContext('2d');
 
     // Safely destroy charts if they exist
-    if (window.stepsChart && typeof window.stepsChart.destroy === 'function') window.stepsChart.destroy();
-    if (window.hourlyStepsChart && typeof window.hourlyStepsChart.destroy === 'function') window.hourlyStepsChart.destroy();
-    if (window.weightChart && typeof window.weightChart.destroy === 'function') window.weightChart.destroy();
-    if (window.bloodPressureChart && typeof window.bloodPressureChart.destroy === 'function') window.bloodPressureChart.destroy();
+    if (charts.stepsChart && typeof charts.stepsChart.destroy === 'function') charts.stepsChart.destroy();
+    if (charts.hourlyStepsChart && typeof charts.hourlyStepsChart.destroy === 'function') charts.hourlyStepsChart.destroy();
+    if (charts.weightChart && typeof charts.weightChart.destroy === 'function') charts.weightChart.destroy();
+    if (charts.bloodPressureChart && typeof charts.bloodPressureChart.destroy === 'function') charts.bloodPressureChart.destroy();
 
     const vitalsEntries = Object.entries(userDailyData || {});
     if (!vitalsEntries.length) {
@@ -50,7 +65,7 @@ function renderTrends() {
     const systolicData = vitalsEntries.map(([, data]) => data.bloodPressure?.systolic || null);
     const diastolicData = vitalsEntries.map(([, data]) => data.bloodPressure?.diastolic || null);
 
-    window.stepsChart = new Chart(stepsCtx, {
+    charts.stepsChart = new Chart(stepsCtx, {
         type: 'line',
         data: { labels: dates, datasets: [{ label: 'Steps', data: stepsData, borderColor: 'blue', fill: false }] },
         options: { scales: { y: { beginAtZero: true } } }
@@ -65,19 +80,19 @@ function renderTrends() {
             });
         }
     });
-    window.hourlyStepsChart = new Chart(hourlyStepsCtx, {
+    charts.hourlyStepsChart = new Chart(hourlyStepsCtx, {
         type: 'bar',
         data: { labels: Array.from({ length: 24 }, (_, i) => `${i}:00`), datasets: [{ label: 'Hourly Steps', data: hourlySteps, backgroundColor: 'blue' }] },
         options: { scales: { y: { beginAtZero: true } } }
     });
 
-    window.weightChart = new Chart(weightCtx, {
+    charts.weightChart = new Chart(weightCtx, {
         type: 'line',
         data: { labels: dates, datasets: [{ label: 'Weight', data: weightData, borderColor: 'green', fill: false }] },
         options: { scales: { y: { beginAtZero: false } } }
     });
 
-    window.bloodPressureChart = new Chart(bpCtx, {
+    charts.bloodPressureChart = new Chart(bpCtx, {
         type: 'line',
         data: {
             labels: dates,
