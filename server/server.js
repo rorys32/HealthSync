@@ -12,9 +12,10 @@ app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      styleSrc: ["'self'", "'unsafe-inline'"], // Allow inline styles temporarily
-      scriptSrc: ["'self'", "'unsafe-inline'"], // Allow inline scripts temporarily
+      styleSrc: ["'self'", "'unsafe-inline'"], // Allow inline styles
+      scriptSrc: ["'self'", "'unsafe-inline'"], // Allow inline scripts
       connectSrc: ["'self'"], // Allow connections to self
+      imgSrc: ["'self'"], // Allow images from self (e.g., favicon.ico)
     },
   },
 }));
