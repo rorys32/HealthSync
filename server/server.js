@@ -2,9 +2,22 @@ const express = require('express');
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+const helmet = require('helmet');
 
 const app = express();
 app.use(express.json());
+
+// Content Security Policy configuration
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      styleSrc: ["'self'", "'unsafe-inline'"], // Allow inline styles temporarily
+      scriptSrc: ["'self'", "'unsafe-inline'"], // Allow inline scripts temporarily
+      connectSrc: ["'self'"], // Allow connections to self
+    },
+  },
+}));
 
 // MongoDB Connection (Insecure for now, to be secured later)
 mongoose.connect('mongodb://localhost:27017/healthsync', { useNewUrlParser: true, useUnifiedTopology: true })
