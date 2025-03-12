@@ -7,6 +7,9 @@ const helmet = require('helmet');
 const app = express();
 app.use(express.json());
 
+// Prevent favicon.ico request
+app.get('/favicon.ico', (req, res) => res.status(404).end());
+
 // Content Security Policy configuration
 app.use(helmet({
   contentSecurityPolicy: {
@@ -15,7 +18,6 @@ app.use(helmet({
       styleSrc: ["'self'", "'unsafe-inline'"], // Allow inline styles
       scriptSrc: ["'self'", "'unsafe-inline'"], // Allow inline scripts
       connectSrc: ["'self'"], // Allow connections to self
-      imgSrc: ["'self'"], // Allow images from self (e.g., favicon.ico)
     },
   },
 }));
