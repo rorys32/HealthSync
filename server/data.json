@@ -1,0 +1,239 @@
+{
+  "userDailyData": {
+    "2025-03-11": {
+      "steps": 0,
+      "water": 0,
+      "weight": null,
+      "bloodPressure": null,
+      "log": [
+        "Burn XT logged",
+        "Burn XT logged",
+        "Meal logged: Ginger Cayenne Spice Tea with Honey, ~100 kcal"
+      ],
+      "exercises": [],
+      "stepsLog": [],
+      "moods": [],
+      "symptoms": []
+    },
+    "2025-03-05": {
+      "steps": 7000,
+      "water": 40,
+      "weight": "153",
+      "bloodPressure": {
+        "systolic": "116",
+        "diastolic": "76"
+      },
+      "log": [
+        "Vitamin D, 2000 IU logged",
+        "Water: 40 oz / 64 oz",
+        "Weight: 153 lbs",
+        "Steps: 7000 / 10000",
+        "Blood Pressure: 116/76 mmHg",
+        "Meal logged: Coffee, ~5 kcal",
+        "Exercise logged: Swimming",
+        "Mood: Energetic",
+        "Symptom: Headache"
+      ],
+      "exercises": [
+        "Swimming"
+      ],
+      "stepsLog": [
+        {
+          "steps": 3000,
+          "time": "2025-03-05T08:00:00"
+        },
+        {
+          "steps": 4000,
+          "time": "2025-03-05T14:00:00"
+        }
+      ],
+      "moods": [
+        {
+          "mood": "Energetic",
+          "time": "2025-03-05T08:00:00"
+        }
+      ],
+      "symptoms": [
+        {
+          "symptom": "Headache",
+          "time": "2025-03-05T10:00:00"
+        }
+      ]
+    },
+    "2025-03-06": {
+      "steps": 8500,
+      "water": 56,
+      "weight": "152",
+      "bloodPressure": {
+        "systolic": "119",
+        "diastolic": "79"
+      },
+      "log": [
+        "Losartan, 50 mg logged",
+        "Water: 56 oz / 64 oz",
+        "Weight: 152 lbs",
+        "Steps: 8500 / 10000",
+        "Blood Pressure: 119/79 mmHg",
+        "Meal logged: Oatmeal, ~150 kcal",
+        "Exercise logged: Jiu Jitsu",
+        "Mood: Happy"
+      ],
+      "exercises": [
+        "Jiu Jitsu"
+      ],
+      "stepsLog": [
+        {
+          "steps": 4500,
+          "time": "2025-03-06T09:00:00"
+        },
+        {
+          "steps": 4000,
+          "time": "2025-03-06T15:00:00"
+        }
+      ],
+      "moods": [
+        {
+          "mood": "Happy",
+          "time": "2025-03-06T09:00:00"
+        }
+      ],
+      "symptoms": []
+    },
+    "2025-03-07": {
+      "steps": 8000,
+      "water": 48,
+      "weight": "152",
+      "bloodPressure": {
+        "systolic": "118",
+        "diastolic": "78"
+      },
+      "log": [
+        "Vitamin D, 2000 IU logged",
+        "Water: 48 oz / 64 oz",
+        "Weight: 152 lbs",
+        "Steps: 8000 / 10000",
+        "Blood Pressure: 118/78 mmHg",
+        "Meal logged: Oatmeal, ~150 kcal",
+        "Exercise logged: Jiu Jitsu",
+        "Mood: Happy",
+        "Mood: Tired"
+      ],
+      "exercises": [
+        "Jiu Jitsu"
+      ],
+      "stepsLog": [
+        {
+          "steps": 5000,
+          "time": "2025-03-07T10:00:00"
+        },
+        {
+          "steps": 3000,
+          "time": "2025-03-07T16:00:00"
+        }
+      ],
+      "moods": [
+        {
+          "mood": "Happy",
+          "time": "2025-03-07T10:00:00"
+        },
+        {
+          "mood": "Tired",
+          "time": "2025-03-07T16:00:00"
+        }
+      ],
+      "symptoms": []
+    },
+    "2025-03-08": {
+      "steps": 6000,
+      "water": 32,
+      "weight": "151",
+      "bloodPressure": {
+        "systolic": "120",
+        "diastolic": "80"
+      },
+      "log": [
+        "Losartan, 50 mg logged",
+        "Water: 32 oz / 64 oz",
+        "Weight: 151 lbs",
+        "Steps: 6000 / 10000",
+        "Blood Pressure: 120/80 mmHg",
+        "Meal logged: Mixed Fruit, ~180 kcal",
+        "Exercise logged: Mountain Biking",
+        "Mood: Calm",
+        "Symptom: Back Pain"
+      ],
+      "exercises": [
+        "Mountain Biking"
+      ],
+      "stepsLog": [
+        {
+          "steps": 2000,
+          "time": "2025-03-08T11:00:00"
+        },
+        {
+          "steps": 4000,
+          "time": "2025-03-08T17:00:00"
+        }
+      ],
+      "moods": [
+        {
+          "mood": "Calm",
+          "time": "2025-03-08T11:00:00"
+        }
+      ],
+      "symptoms": [
+        {
+          "symptom": "Back Pain",
+          "time": "2025-03-08T17:00:00"
+        }
+      ]
+    },
+    "2025-03-09": {
+      "steps": 5000,
+      "water": 16,
+      "weight": "150",
+      "bloodPressure": {
+        "systolic": "122",
+        "diastolic": "82"
+      },
+      "log": [
+        "Water: 16 oz / 64 oz",
+        "Weight: 150 lbs",
+        "Steps: 5000 / 10000",
+        "Blood Pressure: 122/82 mmHg",
+        "Meal logged: Coffee, ~5 kcal",
+        "Exercise logged: Jiu Jitsu",
+        "Mood: Anxious"
+      ],
+      "exercises": [
+        "Jiu Jitsu"
+      ],
+      "stepsLog": [
+        {
+          "steps": 2000,
+          "time": "2025-03-09T08:00:00"
+        },
+        {
+          "steps": 3000,
+          "time": "2025-03-09T14:00:00"
+        }
+      ],
+      "moods": [
+        {
+          "mood": "Anxious",
+          "time": "2025-03-09T14:00:00"
+        }
+      ],
+      "symptoms": []
+    }
+  },
+  "supplements": [
+    "Burn XT",
+    "Losartan",
+    "Mucinex-D",
+    "Amoxicillin"
+  ],
+  "foods": [
+    "Ginger Cayenne Spice Tea with Honey"
+  ]
+}

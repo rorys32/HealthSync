@@ -1,131 +1,77 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HealthSync</title>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Roboto', sans-serif;
-            margin: 0;
-            padding: 20px;
-            background: linear-gradient(135deg, #1e3c72, #2a5298);
-            color: #fff;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-        }
-        .container {
-            max-width: 1200px;
-            background: rgba(255, 255, 255, 0.95);
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
-            color: #333;
-        }
-        h1 { text-align: center; font-size: 2.5em; margin-bottom: 20px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
-        .section { margin-bottom: 30px; }
-        .log-quadrants {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-            background: #f0f0f0;
-            padding: 10px;
-            border-radius: 5px;
-        }
-        .quadrant { padding: 10px; }
-        .quadrant li { color: #1e3c72; }
-        button {
-            background: #ff6b6b;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 25px;
-            cursor: pointer;
-            transition: transform 0.2s, background 0.3s;
-            margin-bottom: 10px;
-        }
-        button:hover { transform: scale(1.05); background: #ff8787; }
-        input, select { padding: 8px; border-radius: 5px; border: 1px solid #ccc; margin-bottom: 10px; }
-        progress { width: 100%; height: 20px; border-radius: 10px; margin-bottom: 10px; }
-        canvas { background: #fff; border-radius: 10px; padding: 10px; }
-        footer {
-            text-align: center;
-            margin-top: 20px;
-            font-size: 0.9em;
-            color: #ddd;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
-            width: 100%;
-            position: relative;
-            bottom: 0;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HealthSync</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
-        <h1 id="currentDate"></h1>
-        <div class="section">
-            <div class="log-quadrants">
-                <div class="quadrant" id="vitalsEntries"><h3>Vitals</h3><ul></ul></div>
-                <div class="quadrant" id="intakeEntries"><h3>Intake</h3><ul></ul></div>
-                <div class="quadrant" id="activityEntries"><h3>Activity</h3><ul></ul></div>
-                <div class="quadrant" id="moodSupplementsEntries"><h3>Mood & Supplements</h3><ul></ul></div>
-            </div>
-        </div>
-        <div class="section">
-            <input id="weightInput" type="number" placeholder="Weight (lbs)">
-            <button id="logWeight">Log Weight</button>
-            <input id="newSupplementInput" placeholder="New Supplement">
-            <button id="addSupplement">Add</button>
-            <div id="supplementList"></div>
-            <button id="logAllSupplements">Log Selected</button>
-            <input id="foodInput" placeholder="Food">
-            <button id="logFood">Log Food</button>
-            <label for="waterProgress">Water Intake:</label>
-            <button class="waterBtn" data-oz="8">8 oz</button>
-            <button class="waterBtn" data-oz="16">16 oz</button>
-            <progress id="waterProgress" max="64" value="0"></progress>
-            <input id="stepInput" type="number" placeholder="Steps">
-            <button id="logSteps">Log Steps</button>
-            <progress id="stepProgress" max="10000" value="0"></progress>
-            <input id="systolicInput" type="number" placeholder="Systolic">
-            <input id="diastolicInput" type="number" placeholder="Diastolic">
-            <button id="logBloodPressure">Log BP</button>
-            <input id="exerciseInput" placeholder="Exercise">
-            <button id="logExercise">Log Exercise</button>
-            <select id="moodSelect">
-                <option value="Happy">Happy</option>
-                <option value="Sad">Sad</option>
-                <option value="Calm">Calm</option>
-                <option value="Anxious">Anxious</option>
-                <option value="Custom">Custom</option>
-            </select>
-            <input id="customMoodInput" placeholder="Custom Mood" style="display: none;">
-            <button id="logMood">Log Mood</button>
-            <input id="symptomInput" placeholder="Symptom">
-            <button id="logSymptom">Log Symptom</button>
-            <button id="loadSampleDataBtn">Load 5-Day Sample Data</button>
-            <button id="resetDataBtn">Reset Data</button>
-            <button id="saveDataBtn">Save Data to File</button>
-            <button id="loadDataBtn">Load Data from File</button>
-            <input type="file" id="loadDataInput" style="display: none;">
-        </div>
-        <div class="section">
-            <canvas id="stepsChart"></canvas>
-            <canvas id="hourlyStepsChart"></canvas>
-            <canvas id="weightChart"></canvas>
-            <canvas id="bloodPressureChart"></canvas>
-        </div>
+  <div class="container">
+    <div class="header">
+      <h1>HealthSync</h1>
+      <span id="date-time"></span>
     </div>
-    <footer>HealthSync v1.3.8 © Copyright 2025 Optcl.ai</footer>
-    <script src="data.js"></script>
-    <script src="ui.js"></script>
-    <script src="events.js"></script>
-    <script src="script.js"></script>
+    <div class="control-container">
+      <div class="quadrant" id="activity">
+        <h3>Activity</h3>
+        <div class="control-group">
+          <input type="number" step="0.1" placeholder="Weight (lbs)" id="weight">
+          <button onclick="logWeight()">Log Weight</button>
+        </div>
+        <div class="control-group">
+          <input type="text" placeholder="New Supplement" id="supplement">
+          <button onclick="addSupplement()">Add</button>
+        </div>
+        <div class="control-group">
+          <input type="text" placeholder="Food" id="food">
+          <button onclick="logFood()">Log Food</button>
+        </div>
+        <div class="control-group">
+          <input type="number" placeholder="Water Intake" id="water" value="8">
+          <button onclick="logWater(8)">8 oz</button>
+          <button onclick="logWater(16)">16 oz</button>
+        </div>
+        <div class="control-group">
+          <input type="number" placeholder="Steps" id="steps">
+          <button onclick="logSteps()">Log Steps</button>
+        </div>
+        <div class="control-group">
+          <input type="number" placeholder="Systolic" id="systolic">
+          <input type="number" placeholder="Diastolic" id="diastolic">
+          <button onclick="logBP()">Log BP</button>
+        </div>
+        <div class="control-group">
+          <input type="text" placeholder="Exercise" id="exercise">
+          <button onclick="logExercise()">Log Exercise</button>
+        </div>
+        <div class="control-group">
+          <input type="text" placeholder="Symptom" id="symptom">
+          <button onclick="logSymptom()">Log Symptom</button>
+        </div>
+      </div>
+      <div class="quadrant" id="mood-supplements">
+        <h3>Mood & Supplements</h3>
+        <div class="control-group">
+          <select id="mood">
+            <option value="Happy">Happy</option>
+            <option value="Sad">Sad</option>
+          </select>
+          <button onclick="logMood()">Log Mood</button>
+        </div>
+      </div>
+    </div>
+    <div class="control-group">
+      <button onclick="loadSampleData()">Load 5-Day Sample Data</button>
+      <button onclick="resetData()">Reset Data</button>
+      <button onclick="saveData()">Save Data to File</button>
+      <button onclick="loadData()">Load Data from File</button>
+    </div>
+    <div class="footer"></div>
+  </div>
+  <script src="script.js"></script>
+  <script src="events.js"></script>
+  <script src="ui.js"></script>
+  <script src="data.js"></script>
 </body>
 </html>

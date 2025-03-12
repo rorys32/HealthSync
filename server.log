@@ -1,0 +1,188 @@
+Attempting MongoDB connection with URI: mongodb://localhost:27017/healthsync
+MongoDB 8.0.5 connected, ping: { ok: 1 }
+Collections in healthsync: [ 'userData', 'users' ]
+HTTP server running on http://0.0.0.0:3000
+Local access: http://localhost:3000
+External access: http://your-public-ip:23748
+[2025-03-11T17:49:37.195Z] POST /api/login
+Generated JWT: { id: 1, username: 'testuser' }
+Response sent: 200
+[2025-03-11T17:49:37.198Z] POST /api/login
+Generated JWT: { id: 1, username: 'testuser' }
+Response sent: 200
+[2025-03-11T17:49:37.199Z] POST /api/login
+Generated JWT: { id: 1, username: 'testuser' }
+Response sent: 200
+[2025-03-11T17:49:37.221Z] GET /api/data
+Received JWT: present
+JWT verified: { id: 1, username: 'testuser' }
+[2025-03-11T17:49:37.223Z] GET /api/data
+Received JWT: present
+JWT verified: { id: 1, username: 'testuser' }
+Loaded from MongoDB healthsync.userData: {
+  found: true,
+  userDailyDataKeys: [ '2025-03-11' ],
+  supplementCount: 0,
+  foodCount: 1
+}
+Sending MongoDB data to client: {
+  userDailyDataKeys: [ '2025-03-11' ],
+  supplementCount: 0,
+  foodCount: 1
+}
+Response sent: 200
+[2025-03-11T17:49:37.225Z] GET /api/data
+Received JWT: present
+JWT verified: { id: 1, username: 'testuser' }
+Loaded from MongoDB healthsync.userData: {
+  found: true,
+  userDailyDataKeys: [ '2025-03-11' ],
+  supplementCount: 0,
+  foodCount: 1
+}
+Sending MongoDB data to client: {
+  userDailyDataKeys: [ '2025-03-11' ],
+  supplementCount: 0,
+  foodCount: 1
+}
+Response sent: 200
+Loaded from MongoDB healthsync.userData: {
+  found: true,
+  userDailyDataKeys: [ '2025-03-11' ],
+  supplementCount: 0,
+  foodCount: 1
+}
+Sending MongoDB data to client: {
+  userDailyDataKeys: [ '2025-03-11' ],
+  supplementCount: 0,
+  foodCount: 1
+}
+Response sent: 200
+[2025-03-11T17:49:37.396Z] GET /favicon.ico
+Response sent: 404
+[2025-03-11T17:50:03.241Z] POST /api/data
+Received JWT: present
+JWT verified: { id: 1, username: 'testuser' }
+Received data for MongoDB: {
+  userDailyDataKeys: [ '2025-03-11' ],
+  supplementCount: 0,
+  foodCount: 1
+}
+Saved to MongoDB healthsync.userData: {
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedId: null,
+  userDailyDataKeys: [ '2025-03-11' ],
+  supplementCount: 0,
+  foodCount: 1
+}
+Response sent: 200
+[2025-03-11T21:51:07.402Z] POST /api/login
+Generated JWT: { id: 1, username: 'testuser' }
+Response sent: 200
+[2025-03-11T21:51:07.410Z] POST /api/login
+Generated JWT: { id: 1, username: 'testuser' }
+Response sent: 200
+[2025-03-11T21:51:07.412Z] POST /api/login
+Generated JWT: { id: 1, username: 'testuser' }
+Response sent: 200
+[2025-03-11T21:51:07.423Z] GET /api/data
+Received JWT: present
+JWT verified: { id: 1, username: 'testuser' }
+[2025-03-11T21:51:07.424Z] GET /api/data
+Received JWT: present
+JWT verified: { id: 1, username: 'testuser' }
+Loaded from MongoDB healthsync.userData: {
+  found: true,
+  userDailyDataKeys: [ '2025-03-11' ],
+  supplementCount: 0,
+  foodCount: 1
+}
+Sending MongoDB data to client: {
+  userDailyDataKeys: [ '2025-03-11' ],
+  supplementCount: 0,
+  foodCount: 1
+}
+Response sent: 200
+Loaded from MongoDB healthsync.userData: {
+  found: true,
+  userDailyDataKeys: [ '2025-03-11' ],
+  supplementCount: 0,
+  foodCount: 1
+}
+Sending MongoDB data to client: {
+  userDailyDataKeys: [ '2025-03-11' ],
+  supplementCount: 0,
+  foodCount: 1
+}
+Response sent: 200
+[2025-03-11T21:51:07.426Z] GET /api/data
+Received JWT: present
+JWT verified: { id: 1, username: 'testuser' }
+Loaded from MongoDB healthsync.userData: {
+  found: true,
+  userDailyDataKeys: [ '2025-03-11' ],
+  supplementCount: 0,
+  foodCount: 1
+}
+Sending MongoDB data to client: {
+  userDailyDataKeys: [ '2025-03-11' ],
+  supplementCount: 0,
+  foodCount: 1
+}
+Response sent: 200
+[2025-03-12T00:55:40.181Z] POST /api/login
+Generated JWT: { id: 1, username: 'testuser' }
+Response sent: 200
+[2025-03-12T00:55:40.182Z] POST /api/login
+Generated JWT: { id: 1, username: 'testuser' }
+Response sent: 200
+[2025-03-12T00:55:40.183Z] POST /api/login
+Generated JWT: { id: 1, username: 'testuser' }
+Response sent: 200
+[2025-03-12T00:55:40.201Z] GET /api/data
+Received JWT: present
+JWT verified: { id: 1, username: 'testuser' }
+Loaded from MongoDB healthsync.userData: {
+  found: true,
+  userDailyDataKeys: [ '2025-03-11' ],
+  supplementCount: 0,
+  foodCount: 1
+}
+Sending MongoDB data to client: {
+  userDailyDataKeys: [ '2025-03-11' ],
+  supplementCount: 0,
+  foodCount: 1
+}
+Response sent: 200
+[2025-03-12T00:55:40.204Z] GET /api/data
+Received JWT: present
+JWT verified: { id: 1, username: 'testuser' }
+Loaded from MongoDB healthsync.userData: {
+  found: true,
+  userDailyDataKeys: [ '2025-03-11' ],
+  supplementCount: 0,
+  foodCount: 1
+}
+Sending MongoDB data to client: {
+  userDailyDataKeys: [ '2025-03-11' ],
+  supplementCount: 0,
+  foodCount: 1
+}
+Response sent: 200
+[2025-03-12T00:55:40.215Z] GET /api/data
+Received JWT: present
+JWT verified: { id: 1, username: 'testuser' }
+Loaded from MongoDB healthsync.userData: {
+  found: true,
+  userDailyDataKeys: [ '2025-03-11' ],
+  supplementCount: 0,
+  foodCount: 1
+}
+Sending MongoDB data to client: {
+  userDailyDataKeys: [ '2025-03-11' ],
+  supplementCount: 0,
+  foodCount: 1
+}
+Response sent: 200
+[2025-03-12T00:55:40.219Z] GET /favicon.ico

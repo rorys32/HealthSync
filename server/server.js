@@ -1,159 +1,118 @@
-// HealthSync Version 1.3.5 - Backend with HTTP, MongoDB Persistence, and Debug
 const express = require('express');
+const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
-const cors = require('cors');
-const path = require('path');
-const { MongoClient } = require('mongodb');
+const bcrypt = require('bcrypt');
 
 const app = express();
-const PORT = 3000;
-const SECRET_KEY = 'your-secret-key';
-const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/healthsync';
-
-app.use(cors({ origin: '*', methods: ['GET', 'POST'] }));
 app.use(express.json());
-app.use(express.static(path.join(__dirname, '../client'), { etag: false }));
 
-let client;
-let db;
+// MongoDB Connection (Insecure for now, to be secured later)
+mongoose.connect('mongodb://localhost:27017/healthsync', { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.log('Connected to MongoDB'))
+  .catch(err => console.error('MongoDB connection error:', err));
 
-async function connectMongo() {
-    try {
-        console.log('Attempting MongoDB connection with URI:', MONGO_URI);
-        client = await MongoClient.connect(MONGO_URI, { useUnifiedTopology: true });
-        db = client.db();
-        const admin = db.admin();
-        const ping = await admin.ping();
-        console.log('MongoDB 8.0.5 connected, ping:', ping);
-        const collections = await db.listCollections().toArray();
-        console.log('Collections in healthsync:', collections.map(c => c.name));
-    } catch (err) {
-        console.error('MongoDB connection failed:', err.message);
-        process.exit(1);
-    }
-}
+// JWT Secret (To be moved to .env)
+const JWT_SECRET = 'your-secret-key';
 
-async function loadData() {
-    try {
-        if (!db) throw new Error('Database not initialized');
-        const data = await db.collection('userData').findOne({ id: 'userData' }) || {};
-        console.log('Loaded from MongoDB healthsync.userData:', {
-            found: !!data._id,
-            userDailyDataKeys: Object.keys(data.userDailyData || {}),
-            supplementCount: (data.supplements || []).length,
-            foodCount: (data.foods || []).length
-        });
-        return {
-            userDailyData: data.userDailyData || {},
-            supplements: data.supplements || [],
-            foods: data.foods || []
-        };
-    } catch (err) {
-        console.error('Load from MongoDB failed:', err.message);
-        return { userDailyData: {}, supplements: [], foods: [] };
-    }
-}
-
-async function saveData(userDailyData, supplements, foods) {
-    try {
-        if (!db) throw new Error('Database not initialized');
-        const result = await db.collection('userData').updateOne(
-            { id: 'userData' },
-            { $set: { userDailyData, supplements, foods } },
-            { upsert: true }
-        );
-        console.log('Saved to MongoDB healthsync.userData:', {
-            matchedCount: result.matchedCount,
-            modifiedCount: result.modifiedCount,
-            upsertedId: result.upsertedId || null,
-            userDailyDataKeys: Object.keys(userDailyData),
-            supplementCount: supplements.length,
-            foodCount: foods.length
-        });
-    } catch (err) {
-        console.error('Save to MongoDB failed:', err.message);
-    }
-}
-
-app.use((req, res, next) => {
-    console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
-    res.on('finish', () => {
-        console.log(`Response sent: ${res.statusCode}`);
-    });
-    next();
+// User Schema (Temporary, for authentication placeholder)
+const userSchema = new mongoose.Schema({
+  username: String,
+  password: String
 });
+const User = mongoose.model('User', userSchema);
 
-const authenticateToken = (req, res, next) => {
-    const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1];
-    console.log('Received JWT:', token ? 'present' : 'missing');
-    if (!token) {
-        console.log('No JWT provided, rejecting');
-        return res.sendStatus(401);
+// Health Data Schema
+const healthDataSchema = new mongoose.Schema({
+  id: String,
+  foods: [String],
+  supplements: [String],
+  userDailyData: {
+    type: Map,
+    of: {
+      steps: Number,
+      water: Number,
+      weight: Number,
+      bloodPressure: [Number],
+      log: [String],
+      exercises: [String],
+      stepsLog: [Number],
+      moods: [String],
+      symptoms: [String]
     }
+  }
+});
+const HealthData = mongoose.model('HealthData', healthDataSchema);
 
-    jwt.verify(token, SECRET_KEY, (err, user) => {
-        if (err) {
-            console.log('JWT verification failed:', err.message);
-            return res.sendStatus(403);
-        }
-        console.log('JWT verified:', { id: user.id, username: user.username });
-        req.user = user;
-        next();
-    });
+// Middleware
+const authenticateToken = (req, res, next) => {
+  const token = req.headers['authorization']?.split(' ')[1];
+  if (!token) return res.sendStatus(401);
+  jwt.verify(token, JWT_SECRET, (err, user) => {
+    if (err) return res.sendStatus(403);
+    req.user = user;
+    next();
+  });
 };
 
-app.post('/api/login', (req, res) => {
-    const user = { id: 1, username: 'testuser' };
-    const token = jwt.sign(user, SECRET_KEY, { expiresIn: '1h' });
-    console.log('Generated JWT:', { id: user.id, username: user.username });
-    res.json({ token });
+// Login Route
+app.post('/api/login', async (req, res) => {
+  const { username, password } = req.body;
+  const user = await User.findOne({ username });
+  if (user && await bcrypt.compare(password, user.password)) {
+    const token = jwt.sign({ id: user._id, username }, JWT_SECRET, { expiresIn: '24h' });
+    console.log(`[${new Date().toISOString()}] POST /api/login - Generated JWT: { id: ${user._id}, username: '${username}' }`);
+    res.status(200).json({ token });
+  } else {
+    res.sendStatus(401);
+  }
 });
 
+// Log Weight Route (Updated to Float)
+app.post('/api/logWeight', authenticateToken, async (req, res) => {
+  const { weight } = req.body;
+  const parsedWeight = parseFloat(weight);
+  if (isNaN(parsedWeight)) {
+    return res.status(400).json({ error: 'Weight must be a number' });
+  }
+
+  try {
+    const today = new Date().toISOString().split('T')[0];
+    const healthData = await HealthData.findOneAndUpdate(
+      { id: 'userData' },
+      {
+        $set: {
+          [`userDailyData.${today}.weight`]: parsedWeight,
+          [`userDailyData.${today}.log`]: [`Weight: ${parsedWeight} lbs`]
+        }
+      },
+      { upsert: true, new: true }
+    );
+
+    console.log(`[${new Date().toISOString()}] POST /api/logWeight - Weight saved: ${parsedWeight}`);
+    res.status(200).json({ message: 'Weight logged' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Get Data Route
 app.get('/api/data', authenticateToken, async (req, res) => {
-    const { userDailyData, supplements, foods } = await loadData();
-    console.log('Sending MongoDB data to client:', {
-        userDailyDataKeys: Object.keys(userDailyData),
-        supplementCount: supplements.length,
-        foodCount: foods.length
-    });
-    res.json({ userDailyData, supplements, foods });
+  try {
+    const healthData = await HealthData.findOne({ id: 'userData' });
+    const data = healthData ? healthData.toObject() : { userDailyDataKeys: [], supplementCount: 0, foodCount: 0 };
+    if (healthData) {
+      data.supplementCount = healthData.supplements.length;
+      data.foodCount = healthData.foods.length;
+    }
+    console.log(`[${new Date().toISOString()}] GET /api/data - Loaded from MongoDB healthsync.userData:`, data);
+    console.log(`[${new Date().toISOString()}] GET /api/data - Sending MongoDB data to client:`, data);
+    res.status(200).json(data);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
 });
 
-app.post('/api/data', authenticateToken, async (req, res) => {
-    const { userDailyData: newData, supplements: newSupps, foods: newFoods } = req.body;
-    console.log('Received data for MongoDB:', {
-        userDailyDataKeys: Object.keys(newData),
-        supplementCount: newSupps.length,
-        foodCount: newFoods.length
-    });
-    await saveData(newData, newSupps, newFoods);
-    res.sendStatus(200);
-});
-
-app.get('/', (req, res) => {
-    console.log('Serving index.html');
-    res.sendFile(path.join(__dirname, '../client/index.html'));
-});
-
-process.on('SIGTERM', async () => {
-    console.log('SIGTERM received, closing MongoDB...');
-    if (client) await client.close();
-    process.exit(0);
-});
-
-process.on('SIGINT', async () => {
-    console.log('SIGINT received, closing MongoDB...');
-    if (client) await client.close();
-    process.exit(0);
-});
-
-connectMongo().then(() => {
-    app.listen(PORT, '0.0.0.0', () => {
-        console.log(`HTTP server running on http://0.0.0.0:${PORT}`);
-        console.log(`Local access: http://localhost:${PORT}`);
-        console.log(`External access: http://your-public-ip:23748`);
-    });
-}).catch(err => {
-    console.error('Server start failed:', err);
-});
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
