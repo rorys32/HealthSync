@@ -1,125 +1,68 @@
-// HealthSync Version 1.2.5 - Backend with HTTP and Robust JSON Persistence
+// HealthSync Server - Build 1.2.5
+require('dotenv').config();
 const express = require('express');
 const jwt = require('jsonwebtoken');
-const cors = require('cors');
 const path = require('path');
-const fs = require('fs').promises;
+const fs = require('fs');
 
 const app = express();
-const PORT = 3000;
-const SECRET_KEY = 'your-secret-key';
-const DATA_FILE = path.join(__dirname, 'data.json');
+const secretKey = process.env.JWT_SECRET || 'your-secret-key';  // Fallback
+const PORT = process.env.PORT || 3000;
+const DATA_PATH = process.env.DATA_PATH || path.join(__dirname, 'data.json');
 
-app.use(cors({ origin: '*', methods: ['GET', 'POST'] }));
 app.use(express.json());
-app.use(express.static(path.join(__dirname, '../client'), { etag: false }));
+app.use(express.static(path.join(__dirname, '../client')));
 
-let userDailyData = {};
-let supplements = [];
-let foods = [];
-
-async function loadData() {
-    try {
-        const data = await fs.readFile(DATA_FILE, 'utf8');
-        const parsed = JSON.parse(data);
-        userDailyData = parsed.userDailyData || {};
-        supplements = parsed.supplements || [];
-        foods = parsed.foods || [];
-        console.log('Successfully loaded data from file:', { userDailyData, supplements, foods });
-    } catch (err) {
-        console.error('Failed to load data from file:', err.message);
-        console.log('Starting with empty data set');
-        userDailyData = {};
-        supplements = [];
-        foods = [];
+app.post('/api/login', (req, res) => {
+  try {
+    const { username, password } = req.body;
+    if (!username || !password) return res.status(400).json({ error: 'Missing credentials' });
+    if (username === 'testuser' && password === 'testpass') {
+      const token = jwt.sign({ username }, secretKey, { expiresIn: '1h' });
+      res.json({ token });
+    } else {
+      res.status(401).json({ error: 'Invalid credentials' });
     }
-}
-
-async function saveData() {
-    const data = { userDailyData, supplements, foods };
-    try {
-        await fs.writeFile(DATA_FILE, JSON.stringify(data, null, 2), 'utf8');
-        console.log('Successfully saved data to file:', data);
-    } catch (err) {
-        console.error('Failed to save data to file:', err.message);
-    }
-}
-
-app.use((req, res, next) => {
-    console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
-    res.set('Cache-Control', 'no-store');
-    res.on('finish', () => {
-        console.log(`Response sent: ${res.statusCode}`);
-    });
-    next();
+  } catch (err) {
+    console.error('Login error:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
 });
 
 const authenticateToken = (req, res, next) => {
-    const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1];
-    console.log('Auth token received:', token);
-    if (!token) {
-        console.log('No token provided');
-        return res.sendStatus(401);
-    }
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+  if (!token) return res.sendStatus(401);
 
-    jwt.verify(token, SECRET_KEY, (err, user) => {
-        if (err) {
-            console.log('Token verification failed:', err);
-            return res.sendStatus(403);
-        }
-        req.user = user;
-        next();
-    });
+  jwt.verify(token, secretKey, (err, user) => {
+    if (err) return res.sendStatus(403);
+    req.user = user;
+    next();
+  });
 };
 
-app.post('/api/login', (req, res) => {
-    const user = { id: 1, username: 'testuser' };
-    const token = jwt.sign(user, SECRET_KEY, { expiresIn: '1h' });
-    res.json({ token });
+app.get('/api/data', authenticateToken, (req, res) => {
+  try {
+    const data = fs.readFileSync(DATA_PATH, 'utf8');
+    res.json(JSON.parse(data || '{}'));
+  } catch (err) {
+    console.error('Error fetching data:', err);
+    res.json({});
+  }
 });
 
-app.get('/api/data', authenticateToken, async (req, res) => {
-    console.log('Sending data:', { userDailyData, supplements, foods });
-    res.json({ userDailyData, supplements, foods });
+app.post('/api/data', authenticateToken, (req, res) => {
+  try {
+    const newData = req.body;
+    fs.writeFileSync(DATA_PATH, JSON.stringify(newData, null, 2));
+    console.log('Data saved to', DATA_PATH);
+    res.json({ message: 'Data saved' });
+  } catch (err) {
+    console.error('Error saving data:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
 });
 
-app.post('/api/data', authenticateToken, async (req, res) => {
-    const { userDailyData: newData, supplements: newSupps, foods: newFoods } = req.body;
-    console.log('Received data:', req.body);
-    userDailyData = { ...userDailyData, ...newData };
-    supplements = newSupps || supplements;
-    foods = newFoods || foods;
-    console.log('Updated server data:', { userDailyData, supplements, foods });
-    await saveData();
-    res.sendStatus(200);
-});
-
-app.get('/', (req, res) => {
-    console.log('Serving index.html');
-    res.sendFile(path.join(__dirname, '../client/index.html'));
-});
-
-// Save data on process termination
-process.on('SIGTERM', async () => {
-    console.log('Received SIGTERM, saving data before exit...');
-    await saveData();
-    process.exit(0);
-});
-
-process.on('SIGINT', async () => {
-    console.log('Received SIGINT, saving data before exit...');
-    await saveData();
-    process.exit(0);
-});
-
-// Load data on startup
-loadData().then(() => {
-    app.listen(PORT, '0.0.0.0', () => {
-        console.log(`HTTP server running on http://0.0.0.0:${PORT}`);
-        console.log(`Local access: http://localhost:${PORT}`);
-        console.log(`External access: http://your-public-ip:23748`);
-    });
-}).catch(err => {
-    console.error('Failed to start server:', err);
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server running at http://0.0.0.0:${PORT}`);
 });

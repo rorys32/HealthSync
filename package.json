@@ -10,7 +10,11 @@
     "dependencies": {
         "cors": "^2.8.5",
         "express": "^4.21.2",
-        "jsonwebtoken": "^9.0.2"
+        "jsonwebtoken": "^9.0.2",
+        "dotenv": "^16.0.0"
+    },
+    "engines": {
+      "node": ">=12.0.0"
     },
     "devDependencies": {
         "nodemon": "^3.0.1"
