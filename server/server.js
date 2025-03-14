@@ -1,5 +1,3 @@
-nano /home/user/healthsync/server/server.js
-# Replace with (key sections):
 // HealthSync Server - Build 1.3.003
 require('dotenv').config();
 const express = require('express');
