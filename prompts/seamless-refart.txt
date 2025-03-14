@@ -1,0 +1,51 @@
+# HealthSync Project - Restart Prompt for March 14, 2025
+## Project Status
+- **Current Build**: 1.3.002 (live at `34.71.32.132:3000`, commit `f435079`, pushed by Roryay on March 13, 2025).
+- **Branch**: `health-sync-1.3` (repo: `github.com/rorys32/HealthSync`).
+- **Team**: Roryay (lead), Ollie (engineer), Sanjay (infra), AE (automation), Tina (UI/UX), Toko (security), PM (manager).
+- **Last Session**: March 13, 2025—debugged deployment, fixed CI, pushed Tina’s layout tweaks (Weekly Trends Chart below Logging Controls, uniform buttons).
+
+## Working Agreements
+1. **Versioning**: Roryay sets Major.Minor (1.3), team increments patch (`.000` → `.001` → `.002`)—comments unified across files (e.g., `server/server.js`, `index.html`, `style.css`, `package.json`).
+2. **Debug Steps**: Numbered (e.g., Step 2: Check VM, Step 3: Force pull)—Roryay reports by number, team responds—e.g., Step 2 caught script lag.
+3. **CI/CD**: Cron (`*/5 * * * * /home/user/healthsync/scripts/auto-pull.sh`) pulls `health-sync-1.3`, CI (GitHub Actions) tests builds—Roryay manually updates VM script if needed (e.g., Build 1.3.002).
+4. **Roles**: Roryay drives features/versioning, Ollie/AE debug, Tina owns UI (rated 1-5), Sanjay/AE handle infra, Toko secures—feedback loops tight.
+
+## Current State
+- **VM**: `healthsync-dev-vm` (GCP, `34.71.32.132:3000`, `/home/user/healthsync`)—Build 1.3.002 live (`f435079`), Weekly Trends Chart below Logging Controls, buttons at 120px, footer (`© 2025 Optcl.ai HealthSync ver. 1.3.002`).
+- **CI**: `.github/workflows/ci.yml`—tests `/api/login`, `/api/data`, version logged in step (pending AE’s push to fix static name “HealthSync CI - Build 1.3.000”).
+- **Auto-Pull**: `scripts/auto-pull.sh` (Build 1.3.002)—updated on VM, needs repo sync:
+
+- **Cron**: `*/5 * * * * /home/user/healthsync/scripts/auto-pull.sh`—Roryay confirmed, pulls every 5 mins.
+
+## User Stories
+1. **Spin Up Second Server and Test Golden Image** (Sanjay):
+ - **Details**: Spin up `healthsync-test-vm` with AE’s golden image (`ubuntu-20.04`, Node 16, `health-sync-1.3`, Build 1.3.002).
+ - **Tasks**: Sanjay creates VM, tests `/api/login` and `/api/data` (`testuser`/`testpass`), confirms layout (Weekly Trends below Logging Controls, buttons 120px), reports IP/issues by March 14, 2025.
+ - **Support**: AE’s golden image:
+
+
+2. **Integrate Snyk Code Scanning** (Toko):
+- **Details**: Add Snyk to CI for `health-sync-1.3`, scan deps (`express`, `jsonwebtoken`, `dotenv`, `cors`).
+- **Tasks**: Toko sets up Snyk account, links repo, adds scan step to `ci.yml`, configures high-severity fail (CVSS > 7), validates Build 1.3.002, documents (Secrets, README) by March 14, 2025.
+- **Support**: AE’s CI—current `ci.yml` (pre-Snyk):
+
+
+## Next Steps (March 14, 2025)
+1. **Roryay**: Rate Tina’s Build 1.3.002 layout (Weekly Trends position, button sizes)—1-5, any tweaks?
+2. **Sanjay**: Start second VM—use AE’s golden image, test Build 1.3.002, report IP/issues.
+3. **Toko**: Kick off Snyk integration—link repo, update `ci.yml`, scan Build 1.3.002, prep 1.3.003 fixes.
+4. **AE**: Push CI fix (`.github/workflows/ci.yml`)—static name, version logged in step. Support Sanjay/Toko.
+5. **Tina**: Stand by—adjust layout if Roryay flags tweaks (post-rating).
+6. **Ollie**: Assist debug—e.g., cron/VM sync if needed.
+7. **PM**: Coordinate—move to Toko’s JWT security, MongoDB after ratings.
+
+## Details for Restart
+- **Repo**: `github.com/rorys32/HealthSync`, branch `health-sync-1.3`, latest commit `f435079` (Build 1.3.002).
+- **VM**: `healthsync-dev-vm`, IP `34.71.32.132:3000`, path `/home/user/healthsync`, user `stevierayvaughan`.
+- **Files**: `server/server.js`, `client/index.html`, `client/style.css`, `package.json`—all at Build 1.3.002 (comments sync’d).
+- **Cron**: `*/5 * * * * /home/user/healthsync/scripts/auto-pull.sh`—pulls `health-sync-1.3` every 5 mins.
+- **CI**: `.github/workflows/ci.yml`—runs on push/pull, tests `/api/login`, `/api/data`—version fix pending AE push.
+- **Last Action**: Roryay confirmed 1.3.002 live—needs Tina’s rating to close.
+
+Pick up here tomorrow—Roryay, rate Tina, then Sanjay/Toko take the baton! Great job all—see you March 14, 2025!
