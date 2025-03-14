@@ -1,9 +1,9 @@
 #!/bin/bash
-# HealthSync Auto-Pull Script - Build 1.3.001
+# HealthSync Auto-Pull Script - Build 1.3.002
 HEALTHSYNC_DIR="/home/user/healthsync"
-sudo chown -R $(whoami):$(whoami) "$HEALTHSYNC_DIR"  # Ensure ownership
+sudo chown -R $(whoami):$(whoami) "$HEALTHSYNC_DIR"
 cd "$HEALTHSYNC_DIR"
-git config --global --add safe.directory "$HEALTHSYNC_DIR"  # Trust dir
+git config --global --add safe.directory "$HEALTHSYNC_DIR"
 git fetch origin
 git reset --hard origin/health-sync-1.3
 npm install

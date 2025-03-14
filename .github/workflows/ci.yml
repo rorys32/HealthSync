@@ -1,4 +1,4 @@
-name: HealthSync CI - Build 1.3.000
+name: HealthSync CI - Build ${{ env.PACKAGE_VERSION }}
 on:
   push:
     branches:
