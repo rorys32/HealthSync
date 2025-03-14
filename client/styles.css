@@ -1,177 +1,116 @@
-/* HealthSync Version 1.1.017 */
+/* HealthSync CSS - Build 1.3.000 */
 body {
     font-family: 'Segoe UI', Arial, sans-serif;
     margin: 0;
     padding: 10px;
     background-color: #f0f2f5;
     color: #333;
-}
-
-header {
+  }
+  
+  header {
     text-align: center;
     margin-bottom: 15px;
     background: #4a90e2;
     padding: 10px;
     color: white;
     border-radius: 8px;
-}
-
-main {
+  }
+  
+  main {
     max-width: 800px;
     margin: 0 auto;
     display: grid;
     gap: 15px;
-}
-
-section {
+  }
+  
+  section {
     background: white;
     padding: 15px;
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-
-#dailyLog, #loggingControls {
+  }
+  
+  #dailyLog, #loggingControls {
     display: grid;
     gap: 15px;
-}
-
-#logQuadrants {
+  }
+  
+  #logQuadrants {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 10px;
-}
-
-#vitalsQuadrant, #intakeQuadrant, #activityQuadrant, #moodSupplementsQuadrant {
+  }
+  
+  #vitalsQuadrant, #intakeQuadrant, #activityQuadrant, #moodSupplementsQuadrant {
     min-height: 100px;
-}
-
-#dataStatus {
+  }
+  
+  #dataStatus {
     font-size: 14px;
     color: #666;
     text-align: center;
     margin-top: 10px;
-}
-
-#trendSummary {
+  }
+  
+  #trendSummary {
     margin-top: 15px;
-}
-
-h2, h3, h4 {
+  }
+  
+  h2, h3, h4 {
     margin: 0 0 8px;
     color: #4a90e2;
-}
-
-progress {
+  }
+  
+  progress {
     width: 100%;
     height: 20px;
     border-radius: 10px;
     margin-bottom: 10px;
-}
-
-button {
-    padding: 8px 12px;
+  }
+  
+  button {
+    padding: 8px 16px;  /* Uniform padding */
     background: #4a90e2;
     color: white;
     border: none;
     border-radius: 5px;
     cursor: pointer;
-}
-
-button:hover {
+    min-width: 100px;  /* Consistent min size */
+  }
+  
+  button:hover {
     background: #357abd;
-}
-
-input[type="number"], input[type="text"], select {
+  }
+  
+  input[type="number"], input[type="text"], select {
     padding: 8px;
     border: 1px solid #ddd;
     border-radius: 5px;
     width: 150px;
-}
-
-.control-row {
+  }
+  
+  .control-row {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;  /* Keep right-aligned */
     align-items: center;
     gap: 10px;
     margin-bottom: 15px;
-}
-
-#supplements {
+  }
+  
+  #supplements {
     display: flex;
     flex-direction: column;
     gap: 10px;
-}
-
-#supplementListContainer {
+  }
+  
+  #supplementListContainer {
     max-height: 150px;
     overflow-y: auto;
     border: 1px solid #ddd;
     padding: 5px;
     border-radius: 5px;
-}
-
-#supplementControls {
+  }
+  
+  #supplementControls {
     display: flex;
-    justify-content: space-between;
-    gap: 10px;
-}
-
-#newSupplementInput {
-    width: 150px;
-}
-
-#bloodPressure .control-row {
-    flex-wrap: wrap;
-}
-
-#testingControls .control-row {
-    flex-wrap: wrap;
-    justify-content: space-around;
-}
-
-ul {
-    list-style: none;
-    padding: 0;
-}
-
-li {
-    padding: 4px 0;
-}
-
-canvas {
-    margin-bottom: 15px;
-    width: 100% !important;
-}
-
-/* Responsive Design */
-@media (max-width: 500px) {
-    main {
-        padding: 5px;
-        max-width: 100%;
-    }
-    section {
-        padding: 10px;
-    }
-    #logQuadrants {
-        grid-template-columns: 1fr;
-    }
-    .control-row {
-        flex-direction: column;
-        align-items: stretch;
-    }
-    input[type="number"], input[type="text"], select {
-        width: 100%;
-    }
-    #newSupplementInput {
-        width: 100%;
-    }
-    button {
-        width: 100%;
-    }
-    canvas {
-        height: 120px !important;
-    }
-    #supplementList li {
-        font-size: 14px;
-    }
-}
+    justify-content: flex-end;  /* Right-align controls
