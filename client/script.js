@@ -10,8 +10,8 @@ async function initializeUI() {
     document.getElementById('currentDate').textContent = formattedDate; // e.g., "03/14/2025"
     
     // Render UI elements with fetched data
-    document.getElementById('waterProgress').value = userDailyData[today].water;
-    document.getElementById('stepProgress').value = userDailyData[today].steps;
+    document.getElementById('waterProgress').value = userDailyData[formattedDate]?.water || 0;
+    document.getElementById('stepProgress').value = userDailyData[formattedDate]?.steps || 0;
     renderSupplements();
     renderLog();
     renderTrends();
