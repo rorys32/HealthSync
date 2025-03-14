@@ -2,10 +2,10 @@ name: HealthSync CI - Build 1.3.000
 on:
   push:
     branches:
-      - health-sync-1.3  # Fixed branch name
+      - health-sync-1.3
   pull_request:
     branches:
-      - health-sync-1.3  # Fixed branch name
+      - health-sync-1.3
 
 jobs:
   build-and-test:
@@ -35,16 +35,27 @@ jobs:
           echo "DATA_PATH=$(pwd)/data.json" >> .env
           echo "JWT_SECRET=your-secret-key" >> .env
 
-      - name: Run lint and tests (placeholder)
+      - name: Start server
         run: |
-          echo "Lint and tests TBD - placeholder"
           npm start &  # Start server in background
-          sleep 5      # Wait for server
+          sleep 10     # More time to ensure startup
+          # Check if server’s up
+          curl -f http://localhost:3000 || (echo "Server failed to start" && exit 1)
 
-      - name: Test /api/login
+      - name: Test /api/login and capture token
+        id: login
         run: |
-          curl -X POST http://localhost:3000/api/login -H "Content-Type: application/json" -d '{"username":"testuser","password":"testpass"}' -f || exit 1
+          TOKEN=$(curl -s -X POST http://localhost:3000/api/login -H "Content-Type: application/json" -d '{"username":"testuser","password":"testpass"}' | jq -r '.token')
+          if [ -z "$TOKEN" ] || [ "$TOKEN" = "null" ]; then
+            echo "Login failed: $(curl -s -X POST http://localhost:3000/api/login -H 'Content-Type: application/json' -d '{\"username\":\"testuser\",\"password\":\"testpass\"}')"
+            exit 1
+          fi
+          echo "TOKEN=$TOKEN" >> $GITHUB_ENV  # Store token for next steps
 
       - name: Test /api/data POST
         run: |
-          curl -X POST http://localhost:3000/api/data -H "Content-Type: application/json" -H "Authorization: Bearer $(curl -s -X POST http://localhost:3000/api/login -H 'Content-Type: application/json' -d '{\"username\":\"testuser\",\"password\":\"testpass\"}' | jq -r '.token')" -d '{"test":"data"}' -f || exit 1
+          curl -X POST http://localhost:3000/api/data -H "Content-Type: application/json" -H "Authorization: Bearer $TOKEN" -d '{"test":"data"}' -f || exit 1
+
+      - name: Test /api/data GET
+        run: |
+          curl -X GET http://localhost:3000/api/data -H "Authorization: Bearer $TOKEN" -f || exit 1

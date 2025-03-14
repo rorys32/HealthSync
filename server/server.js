@@ -1,4 +1,4 @@
-// HealthSync Server - Build 1.3.000
+// HealthSync Server - Build 1.3.001
 require('dotenv').config();
 const express = require('express');
 const jwt = require('jsonwebtoken');
