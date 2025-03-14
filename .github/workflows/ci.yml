@@ -1,4 +1,4 @@
-name: HealthSync CI - Build ${{ env.PACKAGE_VERSION }}
+name: HealthSync CI
 on:
   push:
     branches:
@@ -24,6 +24,12 @@ jobs:
           npm install
           npm install dotenv jsonwebtoken cors
 
+      - name: Set and log package version
+        run: |
+          PACKAGE_VERSION=$(node -p "require('./package.json').version")
+          echo "Running CI for HealthSync Build $PACKAGE_VERSION"
+          echo "PACKAGE_VERSION=$PACKAGE_VERSION" >> $GITHUB_ENV
+
       - name: Create data.json with perms
         run: |
           touch data.json
@@ -39,7 +45,6 @@ jobs:
         run: |
           npm start &  # Start server in background
           sleep 10     # More time to ensure startup
-          # Check if server’s up
           curl -f http://localhost:3000 || (echo "Server failed to start" && exit 1)
 
       - name: Test /api/login and capture token
@@ -50,7 +55,7 @@ jobs:
             echo "Login failed: $(curl -s -X POST http://localhost:3000/api/login -H 'Content-Type: application/json' -d '{\"username\":\"testuser\",\"password\":\"testpass\"}')"
             exit 1
           fi
-          echo "TOKEN=$TOKEN" >> $GITHUB_ENV  # Store token for next steps
+          echo "TOKEN=$TOKEN" >> $GITHUB_ENV
 
       - name: Test /api/data POST
         run: |
