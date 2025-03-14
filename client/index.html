@@ -1,4 +1,4 @@
-<!-- HealthSync Version 1.3.001 -->
+<!-- HealthSync Version 1.3.002 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -38,14 +38,6 @@
                 </div>
             </div>
             <p id="dataStatus"></p>
-            <div id="trendSummary">
-                <h3>Weekly Trends</h3>
-                <canvas id="weightChart" height="100"></canvas>
-                <canvas id="stepsChart" height="100"></canvas>
-                <canvas id="bpChart" height="100"></canvas>
-                <canvas id="hourlyStepsChart" height="100"></canvas>
-                <ul id="exerciseTrends"></ul>
-            </div>
         </section>
         <section id="loggingControls">
             <h2>Log Your Day</h2>
@@ -135,6 +127,16 @@
                 </div>
             </div>
         </section>
+        <section id="trendSummary">
+            <h2>Weekly Trends</h2>
+            <div>
+                <canvas id="weightChart" height="100"></canvas>
+                <canvas id="stepsChart" height="100"></canvas>
+                <canvas id="bpChart" height="100"></canvas>
+                <canvas id="hourlyStepsChart" height="100"></canvas>
+                <ul id="exerciseTrends"></ul>
+            </div>
+        </section>
         <section id="testingControls">
             <h2>Testing Controls</h2>
             <div class="control-row">
@@ -147,7 +149,7 @@
         </section>
     </main>
     <footer>
-        <p>&copy; <span id="currentYear"></span> Optcl.ai HealthSync ver. 1.3.001</p>
+        <p>© <span id="currentYear"></span> Optcl.ai HealthSync ver. 1.3.002</p>
     </footer>
     <script>
         // Set current year dynamically
