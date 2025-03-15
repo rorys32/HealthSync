@@ -1,8 +1,9 @@
-// HealthSync Version 1.2.2 - UI Rendering
+// HealthSync Version 1.3.003 - UI Rendering
 let charts = {}; // Store chart instances for cleanup
 
 function renderLog() {
     console.log('Rendering log...');
+    const todayKey = getTodayFormatted(); // Use function from data.js
     const vitalsEntries = document.getElementById('vitalsEntries');
     const intakeEntries = document.getElementById('intakeEntries');
     const activityEntries = document.getElementById('activityEntries');
@@ -15,10 +16,10 @@ function renderLog() {
     moodSupplementsEntries.innerHTML = '';
 
     const waterEntry = document.createElement('li');
-    waterEntry.textContent = `Water: ${userDailyData[today].water} oz / 64 oz`;
+    waterEntry.textContent = `Water: ${userDailyData[todayKey].water} oz / 64 oz`;
     intakeEntries.appendChild(waterEntry);
 
-    userDailyData[today].log.forEach(entry => {
+    userDailyData[todayKey].log.forEach(entry => {
         const li = document.createElement('li');
         li.textContent = entry;
         if (entry.startsWith('Weight:') || entry.startsWith('Blood Pressure:')) {
@@ -32,7 +33,7 @@ function renderLog() {
         }
     });
 
-    dataStatus.textContent = `Your data is saved for ${today}`;
+    dataStatus.textContent = `Your data is saved for ${todayKey}`;
 }
 
 function renderSupplements() {
@@ -103,8 +104,9 @@ function renderTrends() {
         options: { scales: { y: { beginAtZero: false } } }
     });
 
+    const todayKey = getTodayFormatted(); // Use function from data.js
     const hourlySteps = {};
-    userDailyData[today].stepsLog.forEach(log => {
+    userDailyData[todayKey].stepsLog.forEach(log => {
         const hour = new Date(log.time).getHours().toString().padStart(2, '0') + ':00';
         hourlySteps[hour] = (hourlySteps[hour] || 0) + log.steps;
     });
