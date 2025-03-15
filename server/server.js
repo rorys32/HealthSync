@@ -1,6 +1,4 @@
-nano /home/user/healthsync/server/server.js
-# Replace with full, clean version:
-// HealthSync Server - Build 1.3.004
+
 require('dotenv').config();
 const express = require('express');
 const jwt = require('jsonwebtoken');
