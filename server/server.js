@@ -72,4 +72,3 @@ app.post('/api/data', authenticateToken, (req, res) => {
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server running at http://0.0.0.0:${PORT}`);
 });
-# Save: Ctrl+O, Enter, Ctrl+X
