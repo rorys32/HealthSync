@@ -1,4 +1,6 @@
-// HealthSync Server - Build 1.3.003
+nano /home/user/healthsync/server/server.js
+# Replace with full, clean version:
+// HealthSync Server - Build 1.3.004
 require('dotenv').config();
 const express = require('express');
 const jwt = require('jsonwebtoken');
@@ -18,6 +20,34 @@ if (!fs.existsSync(DATA_PATH)) {
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '../client')));
+
+app.post('/api/login', (req, res) => {
+  try {
+    const { username, password } = req.body;
+    if (!username || !password) return res.status(400).json({ error: 'Missing credentials' });
+    if (username === 'testuser' && password === 'testpass') {
+      const token = jwt.sign({ username }, secretKey, { expiresIn: '1h' });
+      res.json({ token });
+    } else {
+      res.status(401).json({ error: 'Invalid credentials' });
+    }
+  } catch (err) {
+    console.error('Login error:', err.stack);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+const authenticateToken = (req, res, next) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+  if (!token) return res.sendStatus(401);
+
+  jwt.verify(token, secretKey, (err, user) => {
+    if (err) return res.sendStatus(403);
+    req.user = user;
+    next();
+  });
+};
 
 app.get('/api/data', authenticateToken, (req, res) => {
   try {
@@ -41,7 +71,6 @@ app.post('/api/data', authenticateToken, (req, res) => {
   }
 });
 
-// Rest of server.js unchanged...
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server running at http://0.0.0.0:${PORT}`);
 });
