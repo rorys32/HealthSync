@@ -1,4 +1,4 @@
-// HealthSync Version 1.3.003 - Event Listeners
+// HealthSync Version 1.3.004 - Event Listeners
 document.addEventListener('DOMContentLoaded', async () => {
     console.log('events.js loaded, starting login...');
     await login(); // Initial login
@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     addSupplementBtn.addEventListener('click', async () => {
-        const todayKey = getTodayFormatted(); // Use function from data.js
+        const todayKey = getTodayFormatted(); // Use global function
         const newSup = document.getElementById('newSupplementInput').value.trim();
         if (newSup && !supplements.includes(newSup)) {
             supplements.push(newSup);
@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     logAllSupplementsBtn.addEventListener('click', async () => {
-        const todayKey = getTodayFormatted(); // Use function from data.js
+        const todayKey = getTodayFormatted(); // Use global function
         const checked = document.querySelectorAll('#supplementList input:checked');
         if (checked.length > 0) {
             checked.forEach(input => {
@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     waterBtns.forEach(btn => {
         btn.addEventListener('click', async () => {
-            const todayKey = getTodayFormatted(); // Use function from data.js
+            const todayKey = getTodayFormatted(); // Use global function
             const oz = parseInt(btn.dataset.oz);
             userDailyData[todayKey].water += oz;
             document.getElementById('waterProgress').value = userDailyData[todayKey].water;
@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     logWeightBtn.addEventListener('click', async () => {
-        const todayKey = getTodayFormatted(); // Use function from data.js
+        const todayKey = getTodayFormatted(); // Use global function
         const weight = document.getElementById('weightInput').value;
         if (weight) {
             userDailyData[todayKey].weight = weight;
@@ -72,7 +72,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     logStepsBtn.addEventListener('click', async () => {
-        const todayKey = getTodayFormatted(); // Use function from data.js
+        const todayKey = getTodayFormatted(); // Use global function
         const steps = parseInt(document.getElementById('stepInput').value);
         if (steps && steps > 0) {
             userDailyData[todayKey].steps += steps;
@@ -88,7 +88,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     logBloodPressureBtn.addEventListener('click', async () => {
-        const todayKey = getTodayFormatted(); // Use function from data.js
+        const todayKey = getTodayFormatted(); // Use global function
         const systolic = document.getElementById('systolicInput').value;
         const diastolic = document.getElementById('diastolicInput').value;
         if (systolic && diastolic) {
@@ -103,7 +103,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     logFoodBtn.addEventListener('click', async () => {
-        const todayKey = getTodayFormatted(); // Use function from data.js
+        const todayKey = getTodayFormatted(); // Use global function
         const food = document.getElementById('foodInput').value;
         if (food) {
             if (!foods.includes(food)) foods.push(food);
@@ -115,7 +115,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     logExerciseBtn.addEventListener('click', async () => {
-        const todayKey = getTodayFormatted(); // Use function from data.js
+        const todayKey = getTodayFormatted(); // Use global function
         const exercise = document.getElementById('exerciseInput').value;
         if (exercise) {
             userDailyData[todayKey].log.push(`Exercise logged: ${exercise}`);
@@ -133,7 +133,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     logMoodBtn.addEventListener('click', async () => {
-        const todayKey = getTodayFormatted(); // Use function from data.js
+        const todayKey = getTodayFormatted(); // Use global function
         let mood = document.getElementById('moodSelect').value;
         if (mood === 'Custom') {
             mood = document.getElementById('customMoodInput').value.trim();
@@ -149,7 +149,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     logSymptomBtn.addEventListener('click', async () => {
-        const todayKey = getTodayFormatted(); // Use function from data.js
+        const todayKey = getTodayFormatted(); // Use global function
         const symptom = document.getElementById('symptomInput').value.trim();
         if (symptom) {
             userDailyData[todayKey].symptoms.push({ symptom, time: new Date().toISOString() });
@@ -166,7 +166,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             console.log('No token, logging in...');
             await login();
         }
-        const todayKey = getTodayFormatted(); // Use function from data.js
+        const todayKey = getTodayFormatted(); // Use global function
         const sampleData = {
             "2025-03-05": {
                 steps: 7000,
@@ -246,7 +246,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     resetDataBtn.addEventListener('click', async () => {
         console.log('Resetting data...');
-        const todayKey = getTodayFormatted(); // Use function from data.js
+        const todayKey = getTodayFormatted(); // Use global function
         userDailyData = { [todayKey]: { 
             steps: 0, 
             water: 0, 
@@ -267,7 +267,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     saveDataBtn.addEventListener('click', () => {
         console.log('Saving data to file...');
-        const todayKey = getTodayFormatted(); // Use function from data.js
+        const todayKey = getTodayFormatted(); // Use global function
         const dataStr = JSON.stringify(userDailyData);
         const blob = new Blob([dataStr], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
